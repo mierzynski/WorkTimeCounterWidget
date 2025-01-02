@@ -1,0 +1,22 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Logs
+*.log
+
+# Visual Studio working files
+.vscode/
+*.vs/
+
+# NuGet
+*.nupkg
+# Environment variables
+.env
+

@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             label_ProjectName = new Label();
             label_ProjectTime = new Label();
             button_StartStop = new Button();
             button_Break = new Button();
             button_Infolinia = new Button();
             radioButton_ShowConfigWindow = new RadioButton();
+            timer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
             // label_ProjectName
@@ -99,6 +101,11 @@
             radioButton_ShowConfigWindow.UseVisualStyleBackColor = true;
             radioButton_ShowConfigWindow.CheckedChanged += radioButton_ShowConfigWindow_CheckedChanged;
             // 
+            // timer
+            // 
+            timer.Interval = 1000;
+            timer.Tick += timer_Tick;
+            // 
             // WidgetForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -127,5 +134,6 @@
         private Button button_Break;
         private Button button_Infolinia;
         private RadioButton radioButton_ShowConfigWindow;
+        private System.Windows.Forms.Timer timer;
     }
 }

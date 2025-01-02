@@ -28,19 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            comboBox_ProjectToDisplay = new ComboBox();
             button_AddProject = new Button();
             button_DeleteProject = new Button();
             label_TimeSum = new Label();
+            textBox_ProjectName = new TextBox();
+            listBox_Projects = new ListBox();
             SuspendLayout();
-            // 
-            // comboBox_ProjectToDisplay
-            // 
-            comboBox_ProjectToDisplay.FormattingEnabled = true;
-            comboBox_ProjectToDisplay.Location = new Point(12, 12);
-            comboBox_ProjectToDisplay.Name = "comboBox_ProjectToDisplay";
-            comboBox_ProjectToDisplay.Size = new Size(121, 23);
-            comboBox_ProjectToDisplay.TabIndex = 0;
             // 
             // button_AddProject
             // 
@@ -50,6 +43,7 @@
             button_AddProject.TabIndex = 1;
             button_AddProject.Text = "add project";
             button_AddProject.UseVisualStyleBackColor = true;
+            button_AddProject.Click += button_AddProject_Click;
             // 
             // button_DeleteProject
             // 
@@ -59,6 +53,7 @@
             button_DeleteProject.TabIndex = 2;
             button_DeleteProject.Text = "delete project";
             button_DeleteProject.UseVisualStyleBackColor = true;
+            button_DeleteProject.Click += button_DeleteProject_Click;
             // 
             // label_TimeSum
             // 
@@ -69,15 +64,32 @@
             label_TimeSum.TabIndex = 3;
             label_TimeSum.Text = "5,5h";
             // 
+            // textBox_ProjectName
+            // 
+            textBox_ProjectName.Location = new Point(139, 41);
+            textBox_ProjectName.Name = "textBox_ProjectName";
+            textBox_ProjectName.Size = new Size(100, 23);
+            textBox_ProjectName.TabIndex = 4;
+            // 
+            // listBox_Projects
+            // 
+            listBox_Projects.FormattingEnabled = true;
+            listBox_Projects.ItemHeight = 15;
+            listBox_Projects.Location = new Point(12, 12);
+            listBox_Projects.Name = "listBox_Projects";
+            listBox_Projects.Size = new Size(120, 94);
+            listBox_Projects.TabIndex = 5;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(listBox_Projects);
+            Controls.Add(textBox_ProjectName);
             Controls.Add(label_TimeSum);
             Controls.Add(button_DeleteProject);
             Controls.Add(button_AddProject);
-            Controls.Add(comboBox_ProjectToDisplay);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -85,10 +97,10 @@
         }
 
         #endregion
-
-        private ComboBox comboBox_ProjectToDisplay;
         private Button button_AddProject;
         private Button button_DeleteProject;
         private Label label_TimeSum;
+        private TextBox textBox_ProjectName;
+        private ListBox listBox_Projects;
     }
 }

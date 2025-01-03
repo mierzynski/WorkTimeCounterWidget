@@ -16,9 +16,10 @@ namespace WorkTimeCounterWidget
         public Form1()
         {
             InitializeComponent();
-            LoadProjectsFromFile();
             widgetForm = new WidgetForm();
             widgetForm.Show();
+            LoadProjectsFromFile();
+            widgetForm.UpdateProjectList(projects);
         }
 
         private void SaveProjectsToFile()
@@ -54,12 +55,15 @@ namespace WorkTimeCounterWidget
                 {
                     listBox_Projects.Items.Add(project.Name);
                 }
+
+                widgetForm?.UpdateProjectList(projects);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading projects: {ex.Message}");
             }
         }
+
 
         private void button_AddProject_Click(object sender, EventArgs e)
         {
@@ -76,6 +80,7 @@ namespace WorkTimeCounterWidget
             listBox_Projects.Items.Add(projectName);
             textBox_ProjectName.Clear();
 
+            widgetForm.UpdateProjectList(projects);
             SaveProjectsToFile();
         }
 
@@ -95,6 +100,7 @@ namespace WorkTimeCounterWidget
                 projects.Remove(projectToDelete);
                 listBox_Projects.Items.Remove(projectName);
 
+                widgetForm.UpdateProjectList(projects);
                 SaveProjectsToFile();
             }
         }

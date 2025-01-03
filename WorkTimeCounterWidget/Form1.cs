@@ -11,11 +11,14 @@ namespace WorkTimeCounterWidget
     {
         private const string FilePath = "projects.json";
         private List<Project> projects = new List<Project>();
+        private WidgetForm widgetForm;
 
         public Form1()
         {
             InitializeComponent();
             LoadProjectsFromFile();
+            widgetForm = new WidgetForm();
+            widgetForm.Show();
         }
 
         private void SaveProjectsToFile()

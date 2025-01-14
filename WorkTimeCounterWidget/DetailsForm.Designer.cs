@@ -33,6 +33,7 @@
             label_TimeSum = new Label();
             textBox_ProjectName = new TextBox();
             listBox_Projects = new ListBox();
+            listBox_ProjectTimesList = new ListBox();
             SuspendLayout();
             // 
             // button_AddProject
@@ -80,11 +81,21 @@
             listBox_Projects.Size = new Size(120, 94);
             listBox_Projects.TabIndex = 5;
             // 
+            // listBox_ProjectTimesList
+            // 
+            listBox_ProjectTimesList.FormattingEnabled = true;
+            listBox_ProjectTimesList.ItemHeight = 15;
+            listBox_ProjectTimesList.Location = new Point(386, 16);
+            listBox_ProjectTimesList.Name = "listBox_ProjectTimesList";
+            listBox_ProjectTimesList.Size = new Size(120, 94);
+            listBox_ProjectTimesList.TabIndex = 6;
+            // 
             // DetailsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(listBox_ProjectTimesList);
             Controls.Add(listBox_Projects);
             Controls.Add(textBox_ProjectName);
             Controls.Add(label_TimeSum);
@@ -102,5 +113,6 @@
         private Label label_TimeSum;
         private TextBox textBox_ProjectName;
         private ListBox listBox_Projects;
+        private ListBox listBox_ProjectTimesList;
     }
 }

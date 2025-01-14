@@ -36,7 +36,9 @@ namespace WorkTimeCounterWidget
         {
             try
             {
-                var json = JsonSerializer.Serialize(projects);
+                var projectNames = projects.Select(p => new ProjectNameOnly { Name = p.Name }).ToList();
+
+                var json = JsonSerializer.Serialize(projectNames);
                 File.WriteAllText(FilePath, json);
             }
             catch (Exception ex)
@@ -45,34 +47,6 @@ namespace WorkTimeCounterWidget
             }
         }
 
-        //private void LoadProjectsFromFile()
-        //{
-        //    try
-        //    {
-        //        if (File.Exists(FilePath))
-        //        {
-        //            var json = File.ReadAllText(FilePath);
-        //            projects = JsonSerializer.Deserialize<List<Project>>(json) ?? new List<Project>();
-        //        }
-        //        else
-        //        {
-        //            projects = new List<Project>();
-        //            SaveProjectsToFile();
-        //        }
-
-        //        listBox_Projects.Items.Clear();
-        //        foreach (var project in projects)
-        //        {
-        //            listBox_Projects.Items.Add(project.Name);
-        //        }
-
-        //        widgetForm.UpdateProjectList(projects);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Error loading projects: {ex.Message}");
-        //    }
-        //}
         public void LoadProjectsFromFile()
         {
             try
@@ -80,7 +54,9 @@ namespace WorkTimeCounterWidget
                 if (File.Exists(FilePath))
                 {
                     var json = File.ReadAllText(FilePath);
-                    projects = JsonSerializer.Deserialize<List<Project>>(json) ?? new List<Project>();
+                    var projectNames = JsonSerializer.Deserialize<List<ProjectNameOnly>>(json) ?? new List<ProjectNameOnly>();
+
+                    projects = projectNames.Select(p => new Project(p.Name)).ToList();
                 }
                 else
                 {
@@ -94,7 +70,6 @@ namespace WorkTimeCounterWidget
                     listBox_Projects.Items.Add(project.Name);
                 }
 
-                // Zg³oszenie zdarzenia aktualizacji projektów
                 OnProjectsUpdated();
             }
             catch (Exception ex)
@@ -145,8 +120,31 @@ namespace WorkTimeCounterWidget
                 OnProjectsUpdated();
             }
         }
-    }
 
+        public void ReceiveProjectsData(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
+        {
+            // Wyczyœæ poprzednie dane
+            listBox_ProjectTimesList.Items.Clear();
+
+            // Dodaj projekty
+            foreach (var project in projects)
+            {
+                listBox_ProjectTimesList.Items.Add($"{project.Name} - {project.TimeSpent.ToString(@"hh\:mm\:ss")}");
+            }
+
+            // Dodaj czas przerwy
+            listBox_ProjectTimesList.Items.Add($"Przerwa: {breakTime.ToString(@"hh\:mm\:ss")}");
+
+            // Dodaj czas infolinii
+            listBox_ProjectTimesList.Items.Add($"Infolinia WB: {infoLineTime.ToString(@"hh\:mm\:ss")}");
+        }
+
+
+    }
+    public class ProjectNameOnly
+    {
+        public string Name { get; set; }
+    }
 
     public class Project
     {

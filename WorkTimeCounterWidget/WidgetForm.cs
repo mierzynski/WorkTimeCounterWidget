@@ -162,21 +162,6 @@ namespace WorkTimeCounterWidget
             }
         }
 
-
-        //private void timer_Tick(object sender, EventArgs e)
-        //{
-        //    if (isProjectRunning && !isBreakRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
-        //    {
-        //        var currentProject = projects[currentProjectIndex];
-        //        currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
-        //        label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
-        //    }
-        //    else if (isBreakRunning)
-        //    {
-        //        breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
-        //        label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
-        //    }
-        //}
         private void timer_Tick(object sender, EventArgs e)
         {
             if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
@@ -220,30 +205,30 @@ namespace WorkTimeCounterWidget
             UpdateCurrentProject();
         }
 
+
         private void button_ShowMainWindow_Click_1(object sender, EventArgs e)
         {
-            if (detailsForm == null || detailsForm.IsDisposed)
-            {
-                detailsForm = new DetailsForm();
-                detailsForm.ProjectsUpdated += projects =>
-                {
-                    this.projects = projects;
-                    UpdateCurrentProject();
-                };
-                detailsForm.Show();
-            }
-            else
-            {
+
                 if (detailsForm.Visible)
                 {
                     detailsForm.Hide();
                 }
                 else
                 {
+                    detailsForm = new DetailsForm();
+
+                    // Przesyłanie listy projektów, czasu przerwy i infolinii
+                    detailsForm.ReceiveProjectsData(projects, breakTime, infoLineTime);
+
+                    detailsForm.ProjectsUpdated += projects =>
+                    {
+                        this.projects = projects;
+                        UpdateCurrentProject();
+                    };
                     detailsForm.Show();
                 }
-            }
         }
+
 
     }
 }

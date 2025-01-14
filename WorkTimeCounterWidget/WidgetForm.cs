@@ -10,6 +10,7 @@ namespace WorkTimeCounterWidget
         private List<Project> projects = new List<Project>();
         private int currentProjectIndex = -1; // Brak projektu na początku
         private TimeSpan projectTime = TimeSpan.Zero;
+        private TimeSpan breakTime = TimeSpan.Zero;
         private bool isProjectRunning = false;
         private bool isTimerRunning = false;
         private bool isBreakRunning = false;
@@ -44,7 +45,7 @@ namespace WorkTimeCounterWidget
             else
             {
                 label_ProjectName.Text = "No project selected";
-                label_ProjectTime.Text = "00:00:00";
+                label_ProjectTime.Text = "";
             }
         }
 
@@ -71,48 +72,73 @@ namespace WorkTimeCounterWidget
 
             isTimerRunning = !isTimerRunning;
         }
+
         private void button_Break_Click(object sender, EventArgs e)
         {
             if (isBreakRunning)
             {
-                // Wznawiamy stoper dla projektu
-                timer.Start();
+                // Kończymy przerwę, wznawiamy licznik projektu
                 isBreakRunning = false;
+                timer.Start();
 
-                // Zmieniamy tekst i kolor przycisku
-                button_Break.BackColor = Color.FromArgb(64, 64, 64);
+                // Przywracamy informacje o bieżącym projekcie
+                if (currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+                {
+                    var currentProject = projects[currentProjectIndex];
+                    label_ProjectName.Text = currentProject.Name;
+                    label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
+                }
 
-                // Zmieniamy stan przycisku Start/Stop
-                button_StartStop.Text = "STARTED";
+                // Aktywujemy przycisk Start/Stop
+                button_StartStop.Enabled = true;
                 button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+
+
+                // Aktualizujemy stan przycisku przerwy
+                button_Break.BackColor = Color.FromArgb(64, 64, 64);
             }
             else
             {
-                // Pauzujemy czas dla projektu i zaczynamy przerwę
-                timer.Stop();
+                // Rozpoczynamy przerwę, zatrzymujemy licznik projektu
                 isBreakRunning = true;
+                timer.Start();
 
-                // Zmieniamy tekst i kolor przycisku przerwy
+                // Resetujemy czas przerwy i zmieniamy informacje wyświetlane w UI
+                label_ProjectName.Text = "Break Time";
+                label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+
+                // Dezaktywujemy przycisk Start/Stop
+                button_StartStop.Enabled = false;
+                button_StartStop.BackColor = Color.Gray;
+                // Aktualizujemy stan przycisku przerwy
                 button_Break.BackColor = ColorTranslator.FromHtml("#008000");
-
-                // Zmieniamy stan przycisku Start/Stop
-                button_StartStop.Text = "PAUSED";
-                button_StartStop.BackColor = ColorTranslator.FromHtml("#FF0000");
             }
         }
+
+
+
         private void button_Infolinia_Click(object sender, EventArgs e)
         {
 
         }
+
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (isProjectRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+            if (isProjectRunning && !isBreakRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
             {
                 var currentProject = projects[currentProjectIndex];
                 currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
                 label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
             }
+            else if (isBreakRunning)
+            {
+                breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
+                label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+            }
         }
+
+
+
 
         private void button_Up_Click_Click(object sender, EventArgs e)
         {

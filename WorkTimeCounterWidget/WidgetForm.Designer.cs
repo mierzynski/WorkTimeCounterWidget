@@ -110,7 +110,7 @@
             // 
             // timer
             // 
-            timer.Interval = 10;
+            timer.Interval = 1;
             timer.Tick += timer_Tick;
             // 
             // button_ShowMainWindow

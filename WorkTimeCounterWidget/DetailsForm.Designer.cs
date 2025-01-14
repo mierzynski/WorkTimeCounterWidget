@@ -59,7 +59,7 @@
             // label_TimeSum
             // 
             label_TimeSum.AutoSize = true;
-            label_TimeSum.Location = new Point(315, 16);
+            label_TimeSum.Location = new Point(315, 109);
             label_TimeSum.Name = "label_TimeSum";
             label_TimeSum.Size = new Size(29, 15);
             label_TimeSum.TabIndex = 3;
@@ -85,7 +85,7 @@
             // 
             listBox_ProjectTimesList.FormattingEnabled = true;
             listBox_ProjectTimesList.ItemHeight = 15;
-            listBox_ProjectTimesList.Location = new Point(386, 16);
+            listBox_ProjectTimesList.Location = new Point(315, 12);
             listBox_ProjectTimesList.Name = "listBox_ProjectTimesList";
             listBox_ProjectTimesList.Size = new Size(120, 94);
             listBox_ProjectTimesList.TabIndex = 6;

@@ -17,7 +17,7 @@ namespace WorkTimeCounterWidget
         {
             InitializeComponent();
             LoadProjectsFromFile();
-            this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
+            this.FormClosing += new FormClosingEventHandler(DetailsForm_FormClosing);
         }
         public event Action<List<Project>> ProjectsUpdated;
         private void OnProjectsUpdated()
@@ -26,7 +26,7 @@ namespace WorkTimeCounterWidget
             ProjectsUpdated?.Invoke(projects);
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void DetailsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
@@ -69,7 +69,6 @@ namespace WorkTimeCounterWidget
                 {
                     listBox_Projects.Items.Add(project.Name);
                 }
-
                 OnProjectsUpdated();
             }
             catch (Exception ex)
@@ -123,20 +122,41 @@ namespace WorkTimeCounterWidget
 
         public void ReceiveProjectsData(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
         {
-            // Wyczyœæ poprzednie dane
             listBox_ProjectTimesList.Items.Clear();
 
-            // Dodaj projekty
             foreach (var project in projects)
             {
                 listBox_ProjectTimesList.Items.Add($"{project.Name} - {project.TimeSpent.ToString(@"hh\:mm\:ss")}");
             }
-
-            // Dodaj czas przerwy
             listBox_ProjectTimesList.Items.Add($"Przerwa: {breakTime.ToString(@"hh\:mm\:ss")}");
-
-            // Dodaj czas infolinii
             listBox_ProjectTimesList.Items.Add($"Infolinia WB: {infoLineTime.ToString(@"hh\:mm\:ss")}");
+
+            UpdateTimeSumLabel(projects, breakTime, infoLineTime);
+        }
+        private void UpdateTimeSumLabel(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
+        {
+
+            TimeSpan totalProjectsTime = projects.Aggregate(TimeSpan.Zero, (sum, project) => sum + project.TimeSpent) + infoLineTime;
+            TimeSpan totalWorkTime = totalProjectsTime + breakTime;
+
+            double totalWorkHours = totalProjectsTime.TotalHours;
+            TimeSpan calculatedBreakTime = TimeSpan.FromMinutes(totalWorkHours * 7);
+
+            TimeSpan totalTimeWithBreaks = totalProjectsTime + calculatedBreakTime;
+
+
+            string formattedTotalWorkTime = FormatTime(totalWorkTime);
+            string formattedTotalTimeWithBreaks = FormatTime(totalTimeWithBreaks);
+
+
+            label_TimeSum.Text = $"Deklarowana suma: {formattedTotalWorkTime}\nWyliczona suma: {formattedTotalTimeWithBreaks}";
+        }
+
+        private string FormatTime(TimeSpan time)
+        {
+            int hours = (int)time.TotalHours;
+            int minutes = time.Minutes;
+            return $"{hours}h {minutes}min";
         }
 
 

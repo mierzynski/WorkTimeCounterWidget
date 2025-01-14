@@ -11,15 +11,25 @@ namespace WorkTimeCounterWidget
     {
         private const string FilePath = "projects.json";
         private List<Project> projects = new List<Project>();
-        private WidgetForm widgetForm;
 
+        private WidgetForm widgetForm;
         public Form1()
         {
             InitializeComponent();
-            widgetForm = new WidgetForm();
-            widgetForm.Show();
             LoadProjectsFromFile();
-            widgetForm.UpdateProjectList(projects);
+            this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
+        }
+        public event Action<List<Project>> ProjectsUpdated;
+        private void OnProjectsUpdated()
+        {
+            // Wywo³anie zdarzenia, jeœli ma subskrybentów
+            ProjectsUpdated?.Invoke(projects);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void SaveProjectsToFile()
@@ -35,7 +45,35 @@ namespace WorkTimeCounterWidget
             }
         }
 
-        private void LoadProjectsFromFile()
+        //private void LoadProjectsFromFile()
+        //{
+        //    try
+        //    {
+        //        if (File.Exists(FilePath))
+        //        {
+        //            var json = File.ReadAllText(FilePath);
+        //            projects = JsonSerializer.Deserialize<List<Project>>(json) ?? new List<Project>();
+        //        }
+        //        else
+        //        {
+        //            projects = new List<Project>();
+        //            SaveProjectsToFile();
+        //        }
+
+        //        listBox_Projects.Items.Clear();
+        //        foreach (var project in projects)
+        //        {
+        //            listBox_Projects.Items.Add(project.Name);
+        //        }
+
+        //        widgetForm.UpdateProjectList(projects);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Error loading projects: {ex.Message}");
+        //    }
+        //}
+        public void LoadProjectsFromFile()
         {
             try
             {
@@ -56,13 +94,17 @@ namespace WorkTimeCounterWidget
                     listBox_Projects.Items.Add(project.Name);
                 }
 
-                widgetForm?.UpdateProjectList(projects);
+                // Zg³oszenie zdarzenia aktualizacji projektów
+                OnProjectsUpdated();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading projects: {ex.Message}");
             }
         }
+
+
+
 
 
         private void button_AddProject_Click(object sender, EventArgs e)
@@ -80,8 +122,8 @@ namespace WorkTimeCounterWidget
             listBox_Projects.Items.Add(projectName);
             textBox_ProjectName.Clear();
 
-            widgetForm.UpdateProjectList(projects);
             SaveProjectsToFile();
+            OnProjectsUpdated();
         }
 
         private void button_DeleteProject_Click(object sender, EventArgs e)
@@ -99,9 +141,8 @@ namespace WorkTimeCounterWidget
             {
                 projects.Remove(projectToDelete);
                 listBox_Projects.Items.Remove(projectName);
-
-                widgetForm.UpdateProjectList(projects);
                 SaveProjectsToFile();
+                OnProjectsUpdated();
             }
         }
     }

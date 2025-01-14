@@ -14,52 +14,40 @@ namespace WorkTimeCounterWidget
         private bool isTimerRunning = false;
         private bool isBreakRunning = false;
 
+        private Form1 detailsForm;
+
         public WidgetForm()
         {
             InitializeComponent();
-        }
 
-        public void UpdateProjectList(List<Project> projectList)
-        {
-            projects = projectList;
-            if (projects.Count > 0)
+
+            detailsForm = new Form1();
+
+            detailsForm.ProjectsUpdated += projects =>
             {
-                currentProjectIndex = 0; // Ustaw pierwszy projekt
+                this.projects = projects;
                 UpdateCurrentProject();
-            }
-            else
-            {
-                currentProjectIndex = -1;
-                label_ProjectName.Text = "No project selected";
-                label_ProjectTime.Text = "00:00:00";
-            }
+            };
+
+            detailsForm.Hide();
+            detailsForm.LoadProjectsFromFile();
         }
 
-        private void UpdateCurrentProject()
+        public void UpdateCurrentProject()
         {
             if (currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
             {
                 var currentProject = projects[currentProjectIndex];
-
-                // Ustaw nazwę projektu
                 label_ProjectName.Text = currentProject.Name;
-
-                // Ustaw czas projektu
                 label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
-
-                // Dynamicznie dostosuj pozycję label_ProjectTime w stosunku do label_ProjectName
-                label_ProjectTime.Left = label_ProjectName.Right + 3;
             }
             else
             {
-                // Jeśli nie ma projektu, wyświetl komunikat
                 label_ProjectName.Text = "No project selected";
                 label_ProjectTime.Text = "00:00:00";
-
-                // Dostosuj label_ProjectTime w przypadku braku projektu
-                label_ProjectTime.Left = label_ProjectName.Right + 3;
             }
         }
+
 
 
 
@@ -92,7 +80,7 @@ namespace WorkTimeCounterWidget
                 isBreakRunning = false;
 
                 // Zmieniamy tekst i kolor przycisku
-                button_Break.BackColor = Color.FromArgb(64,64,64);
+                button_Break.BackColor = Color.FromArgb(64, 64, 64);
 
                 // Zmieniamy stan przycisku Start/Stop
                 button_StartStop.Text = "STARTED";
@@ -140,6 +128,31 @@ namespace WorkTimeCounterWidget
 
             currentProjectIndex = (currentProjectIndex + 1) % projects.Count;
             UpdateCurrentProject();
+        }
+
+        private void button_ShowMainWindow_Click_1(object sender, EventArgs e)
+        {
+            if (detailsForm == null || detailsForm.IsDisposed)
+            {
+                detailsForm = new Form1();
+                detailsForm.ProjectsUpdated += projects =>
+                {
+                    this.projects = projects;
+                    UpdateCurrentProject();
+                };
+                detailsForm.Show();
+            }
+            else
+            {
+                if (detailsForm.Visible)
+                {
+                    detailsForm.Hide();
+                }
+                else
+                {
+                    detailsForm.Show();
+                }
+            }
         }
 
     }

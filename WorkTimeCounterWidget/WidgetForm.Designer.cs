@@ -47,9 +47,9 @@
             label_ProjectName.AutoSize = true;
             label_ProjectName.Location = new Point(27, 13);
             label_ProjectName.Name = "label_ProjectName";
-            label_ProjectName.Size = new Size(25, 15);
+            label_ProjectName.Size = new Size(12, 15);
             label_ProjectName.TabIndex = 0;
-            label_ProjectName.Text = "WB";
+            label_ProjectName.Text = "-";
             // 
             // label_ProjectTime
             // 
@@ -127,6 +127,7 @@
             button_ShowMainWindow.Size = new Size(20, 31);
             button_ShowMainWindow.TabIndex = 5;
             button_ShowMainWindow.UseVisualStyleBackColor = false;
+            button_ShowMainWindow.Click += button_ShowMainWindow_Click_1;
             // 
             // button_Up_Click
             // 

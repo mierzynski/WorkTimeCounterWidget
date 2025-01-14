@@ -90,12 +90,10 @@ namespace WorkTimeCounterWidget
                     label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
                 }
 
-                // Aktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = true;
                 button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
-
-
-                // Aktualizujemy stan przycisku przerwy
+                button_Infolinia.Enabled = true;
+                button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
                 button_Break.BackColor = Color.FromArgb(64, 64, 64);
             }
             else
@@ -108,10 +106,10 @@ namespace WorkTimeCounterWidget
                 label_ProjectName.Text = "Przerwa";
                 label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
 
-                // Dezaktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = false;
                 button_StartStop.BackColor = Color.Gray;
-                // Aktualizujemy stan przycisku przerwy
+                button_Infolinia.Enabled = false;
+                button_Infolinia.BackColor = Color.Gray;
                 button_Break.BackColor = ColorTranslator.FromHtml("#008000");
             }
         }
@@ -137,6 +135,8 @@ namespace WorkTimeCounterWidget
                 // Aktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = true;
                 button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+                button_Break.Enabled = true;
+                button_Break.BackColor = Color.FromArgb(64, 64, 64);
 
                 // Zmieniamy kolor przycisku infolinii
                 button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
@@ -154,6 +154,8 @@ namespace WorkTimeCounterWidget
                 // Dezaktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = false;
                 button_StartStop.BackColor = Color.Gray;
+                button_Break.Enabled = false;
+                button_Break.BackColor = Color.Gray;
 
                 // Zmieniamy kolor przycisku infolinii
                 button_Infolinia.BackColor = ColorTranslator.FromHtml("#008000");

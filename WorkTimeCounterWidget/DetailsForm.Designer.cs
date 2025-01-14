@@ -1,6 +1,6 @@
 ﻿namespace WorkTimeCounterWidget
 {
-    partial class Form1
+    partial class DetailsForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -80,7 +80,7 @@
             listBox_Projects.Size = new Size(120, 94);
             listBox_Projects.TabIndex = 5;
             // 
-            // Form1
+            // DetailsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -90,8 +90,8 @@
             Controls.Add(label_TimeSum);
             Controls.Add(button_DeleteProject);
             Controls.Add(button_AddProject);
-            Name = "Form1";
-            Text = "Form1";
+            Name = "DetailsForm";
+            Text = "Details";
             ResumeLayout(false);
             PerformLayout();
         }

@@ -16,14 +16,14 @@ namespace WorkTimeCounterWidget
         private bool isTimerRunning = false;
         private bool isBreakRunning = false; 
         private bool isInfoLineRunning = false;
-        private Form1 detailsForm;
+        private DetailsForm detailsForm;
 
         public WidgetForm()
         {
             InitializeComponent();
 
 
-            detailsForm = new Form1();
+            detailsForm = new DetailsForm();
 
             detailsForm.ProjectsUpdated += projects =>
             {
@@ -224,7 +224,7 @@ namespace WorkTimeCounterWidget
         {
             if (detailsForm == null || detailsForm.IsDisposed)
             {
-                detailsForm = new Form1();
+                detailsForm = new DetailsForm();
                 detailsForm.ProjectsUpdated += projects =>
                 {
                     this.projects = projects;

@@ -176,7 +176,7 @@
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "WidgetForm";
             StartPosition = FormStartPosition.Manual;
-            Text = "WidgetForm";
+            Text = "Widget";
             TopMost = true;
             ResumeLayout(false);
             PerformLayout();

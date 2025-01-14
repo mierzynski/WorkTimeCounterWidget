@@ -11,10 +11,11 @@ namespace WorkTimeCounterWidget
         private int currentProjectIndex = -1; // Brak projektu na początku
         private TimeSpan projectTime = TimeSpan.Zero;
         private TimeSpan breakTime = TimeSpan.Zero;
+        private TimeSpan infoLineTime = TimeSpan.Zero;
         private bool isProjectRunning = false;
         private bool isTimerRunning = false;
-        private bool isBreakRunning = false;
-
+        private bool isBreakRunning = false; 
+        private bool isInfoLineRunning = false;
         private Form1 detailsForm;
 
         public WidgetForm()
@@ -104,7 +105,7 @@ namespace WorkTimeCounterWidget
                 timer.Start();
 
                 // Resetujemy czas przerwy i zmieniamy informacje wyświetlane w UI
-                label_ProjectName.Text = "Break Time";
+                label_ProjectName.Text = "Przerwa";
                 label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
 
                 // Dezaktywujemy przycisk Start/Stop
@@ -119,23 +120,84 @@ namespace WorkTimeCounterWidget
 
         private void button_Infolinia_Click(object sender, EventArgs e)
         {
+            if (isInfoLineRunning)
+            {
+                // Kończymy liczenie infolinii
+                isInfoLineRunning = false;
+                timer.Start();
 
+                // Przywracamy informacje o bieżącym projekcie
+                if (currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+                {
+                    var currentProject = projects[currentProjectIndex];
+                    label_ProjectName.Text = currentProject.Name;
+                    label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
+                }
+
+                // Aktywujemy przycisk Start/Stop
+                button_StartStop.Enabled = true;
+                button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+
+                // Zmieniamy kolor przycisku infolinii
+                button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
+            }
+            else
+            {
+                // Rozpoczynamy liczenie czasu infolinii
+                isInfoLineRunning = true;
+                timer.Start();
+
+                // Resetujemy czas infolinii i zmieniamy informacje w UI
+                label_ProjectName.Text = "Infolinia";
+                label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
+
+                // Dezaktywujemy przycisk Start/Stop
+                button_StartStop.Enabled = false;
+                button_StartStop.BackColor = Color.Gray;
+
+                // Zmieniamy kolor przycisku infolinii
+                button_Infolinia.BackColor = ColorTranslator.FromHtml("#008000");
+            }
         }
 
+
+        //private void timer_Tick(object sender, EventArgs e)
+        //{
+        //    if (isProjectRunning && !isBreakRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+        //    {
+        //        var currentProject = projects[currentProjectIndex];
+        //        currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
+        //        label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
+        //    }
+        //    else if (isBreakRunning)
+        //    {
+        //        breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
+        //        label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+        //    }
+        //}
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (isProjectRunning && !isBreakRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+            if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
             {
+                // Liczymy czas dla bieżącego projektu
                 var currentProject = projects[currentProjectIndex];
                 currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
                 label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
             }
             else if (isBreakRunning)
             {
+                // Liczymy czas dla przerwy
                 breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
                 label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
             }
+            else if (isInfoLineRunning)
+            {
+                // Liczymy czas dla infolinii
+                infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
+                label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
+            }
         }
+
 
 
 

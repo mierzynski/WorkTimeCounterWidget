@@ -34,6 +34,7 @@
             textBox_ProjectName = new TextBox();
             listBox_Projects = new ListBox();
             listBox_ProjectTimesList = new ListBox();
+            button_CountTheDay = new Button();
             SuspendLayout();
             // 
             // button_AddProject
@@ -90,11 +91,22 @@
             listBox_ProjectTimesList.Size = new Size(120, 94);
             listBox_ProjectTimesList.TabIndex = 6;
             // 
+            // button_CountTheDay
+            // 
+            button_CountTheDay.Location = new Point(12, 140);
+            button_CountTheDay.Name = "button_CountTheDay";
+            button_CountTheDay.Size = new Size(75, 23);
+            button_CountTheDay.TabIndex = 7;
+            button_CountTheDay.Text = "Zakończ dzień";
+            button_CountTheDay.UseVisualStyleBackColor = true;
+            button_CountTheDay.Click += button_CountTheDay_Click;
+            // 
             // DetailsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button_CountTheDay);
             Controls.Add(listBox_ProjectTimesList);
             Controls.Add(listBox_Projects);
             Controls.Add(textBox_ProjectName);
@@ -114,5 +126,6 @@
         private TextBox textBox_ProjectName;
         private ListBox listBox_Projects;
         private ListBox listBox_ProjectTimesList;
+        private Button button_CountTheDay;
     }
 }

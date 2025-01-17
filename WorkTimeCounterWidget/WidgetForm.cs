@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
+using System.Reflection.Emit;
 using System.Windows.Forms;
 
 namespace WorkTimeCounterWidget
@@ -17,10 +19,30 @@ namespace WorkTimeCounterWidget
         private bool isBreakRunning = false;
         private bool isInfoLineRunning = false;
         private DetailsForm detailsForm;
+        private FontManager fontManager;
 
         public WidgetForm()
         {
             InitializeComponent();
+
+            //PrivateFontCollection pfc = new PrivateFontCollection();
+            //pfc.AddFontFile("C:\\Users\\user\\source\\repos\\WorkTimeCounterWidget\\WorkTimeCounterWidget\\Fonts\\Technology.ttf");
+            //label_ProjectTime.Font = new Font(pfc.Families[0], 16, FontStyle.Regular);
+
+            fontManager = new FontManager();
+            try
+            {
+                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string fontsFolder = Path.Combine(appDirectory, "Fonts");
+
+                fontManager.LoadFontsFromFolder(fontsFolder);
+
+                label_ProjectTime.Font = fontManager.GetFont("Technology", 16, FontStyle.Regular);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Błąd podczas ładowania czcionek: {ex.Message}");
+            }
 
 
             detailsForm = new DetailsForm();
@@ -251,6 +273,35 @@ namespace WorkTimeCounterWidget
         {
             mouseDown = false;
 
+        }
+    }
+
+    public class FontManager
+    {
+        private PrivateFontCollection privateFontCollection = new PrivateFontCollection();
+
+        public void LoadFontsFromFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                throw new DirectoryNotFoundException($"Folder czcionek nie istnieje: {folderPath}");
+            }
+
+            foreach (var fontFile in Directory.GetFiles(folderPath, "*.ttf"))
+            {
+                privateFontCollection.AddFontFile(fontFile);
+            }
+        }
+
+        public Font GetFont(string fontFamilyName, float size, FontStyle style = FontStyle.Regular)
+        {
+            var family = Array.Find(privateFontCollection.Families, f => f.Name.Equals(fontFamilyName, StringComparison.OrdinalIgnoreCase));
+            if (family == null)
+            {
+                throw new Exception($"Nie znaleziono czcionki: {fontFamilyName}");
+            }
+
+            return new Font(family, size, style);
         }
     }
 }

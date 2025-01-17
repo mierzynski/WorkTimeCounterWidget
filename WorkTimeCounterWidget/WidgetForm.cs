@@ -14,7 +14,7 @@ namespace WorkTimeCounterWidget
         private TimeSpan infoLineTime = TimeSpan.Zero;
         private bool isProjectRunning = false;
         private bool isTimerRunning = false;
-        private bool isBreakRunning = false; 
+        private bool isBreakRunning = false;
         private bool isInfoLineRunning = false;
         private DetailsForm detailsForm;
 
@@ -209,26 +209,48 @@ namespace WorkTimeCounterWidget
         private void button_ShowMainWindow_Click_1(object sender, EventArgs e)
         {
 
-                if (detailsForm.Visible)
-                {
-                    detailsForm.Hide();
-                }
-                else
-                {
-                    detailsForm = new DetailsForm();
+            if (detailsForm.Visible)
+            {
+                detailsForm.Hide();
+            }
+            else
+            {
+                detailsForm = new DetailsForm();
 
-                    // Przesyłanie listy projektów, czasu przerwy i infolinii
-                    detailsForm.ReceiveProjectsData(projects, breakTime, infoLineTime);
+                // Przesyłanie listy projektów, czasu przerwy i infolinii
+                detailsForm.ReceiveProjectsData(projects, breakTime, infoLineTime);
 
-                    detailsForm.ProjectsUpdated += projects =>
-                    {
-                        this.projects = projects;
-                        UpdateCurrentProject();
-                    };
-                    detailsForm.Show();
-                }
+                detailsForm.ProjectsUpdated += projects =>
+                {
+                    this.projects = projects;
+                    UpdateCurrentProject();
+                };
+                detailsForm.Show();
+            }
         }
 
+        bool mouseDown;
+        private Point offset;
+        private void mouseDown_Event(object sender, MouseEventArgs e)
+        {
+            offset.X = e.X;
+            offset.Y = e.Y;
+            mouseDown = true;
+        }
 
+        private void mouseMove_Event(object sender, MouseEventArgs e)
+        {
+            if (mouseDown == true)
+            {
+                Point currentScreenPosition = PointToScreen(e.Location);
+                Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
+            }
+        }
+
+        private void mouseUp_Event(object sender, MouseEventArgs e)
+        {
+            mouseDown = false;
+
+        }
     }
 }

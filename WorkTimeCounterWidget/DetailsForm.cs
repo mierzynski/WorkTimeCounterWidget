@@ -167,6 +167,8 @@ namespace WorkTimeCounterWidget
         private void button_CountTheDay_Click(object sender, EventArgs e)
         {
             SaveDayDataToFile();
+
+            Environment.Exit(0);
         }
 
         private void SaveDayDataToFile()

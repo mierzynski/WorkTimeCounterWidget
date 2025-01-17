@@ -95,7 +95,7 @@
             // 
             button_CountTheDay.Location = new Point(12, 140);
             button_CountTheDay.Name = "button_CountTheDay";
-            button_CountTheDay.Size = new Size(75, 23);
+            button_CountTheDay.Size = new Size(99, 23);
             button_CountTheDay.TabIndex = 7;
             button_CountTheDay.Text = "Zakończ dzień";
             button_CountTheDay.UseVisualStyleBackColor = true;

@@ -173,11 +173,14 @@
             Controls.Add(button_StartStop);
             Controls.Add(label_ProjectTime);
             Controls.Add(label_ProjectName);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
             Name = "WidgetForm";
-            StartPosition = FormStartPosition.Manual;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Widget";
             TopMost = true;
+            MouseDown += mouseDown_Event;
+            MouseMove += mouseMove_Event;
+            MouseUp += mouseUp_Event;
             ResumeLayout(false);
             PerformLayout();
         }

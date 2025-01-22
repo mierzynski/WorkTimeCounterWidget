@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
@@ -9,6 +10,18 @@ namespace WorkTimeCounterWidget
 {
     public partial class WidgetForm : Form
     {
+        //zaokrąglenie formularza
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn
+        (
+            int nLeftRect,     // x-coordinate of upper-left corner
+            int nTopRect,      // y-coordinate of upper-left corner
+            int nRightRect,    // x-coordinate of lower-right corner
+            int nBottomRect,   // y-coordinate of lower-right corner
+            int nWidthEllipse, // width of ellipse
+            int nHeightEllipse // height of ellipse
+        );
+
         private List<Project> projects = new List<Project>();
         private int currentProjectIndex = -1; // Brak projektu na początku
         private TimeSpan projectTime = TimeSpan.Zero;
@@ -24,6 +37,10 @@ namespace WorkTimeCounterWidget
         public WidgetForm()
         {
             InitializeComponent();
+
+            //zaokrąglenie formularza
+            this.FormBorderStyle = FormBorderStyle.None;
+            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             //PrivateFontCollection pfc = new PrivateFontCollection();
             //pfc.AddFontFile("C:\\Users\\user\\source\\repos\\WorkTimeCounterWidget\\WorkTimeCounterWidget\\Fonts\\Technology.ttf");

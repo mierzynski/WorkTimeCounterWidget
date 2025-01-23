@@ -33,14 +33,12 @@
             label_ProjectName = new Label();
             label_ProjectTime = new Label();
             button_StartStop = new Button();
-            button_Break = new Button();
-            button_Infolinia = new Button();
             timer = new System.Windows.Forms.Timer(components);
             button_ShowMainWindow = new Button();
             button_Up_Click = new Button();
             button_Down_Click = new Button();
-            panel1 = new Panel();
-            panel1.SuspendLayout();
+            button_Break = new Button();
+            button_Infolinia = new Button();
             SuspendLayout();
             // 
             // label_ProjectName
@@ -57,7 +55,8 @@
             // label_ProjectTime
             // 
             label_ProjectTime.AutoSize = true;
-            label_ProjectTime.Location = new Point(12, 34);
+            label_ProjectTime.BackColor = Color.Transparent;
+            label_ProjectTime.Location = new Point(12, 40);
             label_ProjectTime.Name = "label_ProjectTime";
             label_ProjectTime.Size = new Size(49, 15);
             label_ProjectTime.TabIndex = 1;
@@ -79,42 +78,6 @@
             button_StartStop.Text = "PAUSED";
             button_StartStop.UseVisualStyleBackColor = false;
             button_StartStop.Click += button_StartStop_Click;
-            // 
-            // button_Break
-            // 
-            button_Break.BackColor = Color.Black;
-            button_Break.BackgroundImageLayout = ImageLayout.Center;
-            button_Break.FlatAppearance.BorderColor = Color.White;
-            button_Break.FlatAppearance.BorderSize = 0;
-            button_Break.FlatStyle = FlatStyle.Flat;
-            button_Break.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
-            button_Break.ForeColor = Color.White;
-            button_Break.Location = new Point(212, 9);
-            button_Break.Margin = new Padding(0);
-            button_Break.Name = "button_Break";
-            button_Break.Size = new Size(59, 24);
-            button_Break.TabIndex = 3;
-            button_Break.Text = "przerwa";
-            button_Break.UseVisualStyleBackColor = false;
-            button_Break.Click += button_Break_Click;
-            // 
-            // button_Infolinia
-            // 
-            button_Infolinia.BackColor = Color.Black;
-            button_Infolinia.BackgroundImageLayout = ImageLayout.Center;
-            button_Infolinia.FlatAppearance.BorderColor = Color.White;
-            button_Infolinia.FlatAppearance.BorderSize = 0;
-            button_Infolinia.FlatStyle = FlatStyle.Flat;
-            button_Infolinia.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
-            button_Infolinia.ForeColor = Color.White;
-            button_Infolinia.Location = new Point(283, 9);
-            button_Infolinia.Margin = new Padding(0);
-            button_Infolinia.Name = "button_Infolinia";
-            button_Infolinia.Size = new Size(59, 24);
-            button_Infolinia.TabIndex = 4;
-            button_Infolinia.Text = "infolinia";
-            button_Infolinia.UseVisualStyleBackColor = false;
-            button_Infolinia.Click += button_Infolinia_Click;
             // 
             // timer
             // 
@@ -168,16 +131,41 @@
             button_Down_Click.UseVisualStyleBackColor = false;
             button_Down_Click.Click += button_Down_Click_Click;
             // 
-            // panel1
+            // button_Break
             // 
-            panel1.BackgroundImage = (Image)resources.GetObject("panel1.BackgroundImage");
-            panel1.Controls.Add(button_Infolinia);
-            panel1.Controls.Add(button_Break);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(351, 66);
-            panel1.TabIndex = 8;
+            button_Break.BackColor = Color.Black;
+            button_Break.BackgroundImageLayout = ImageLayout.Center;
+            button_Break.FlatAppearance.BorderColor = Color.White;
+            button_Break.FlatAppearance.BorderSize = 0;
+            button_Break.FlatStyle = FlatStyle.Flat;
+            button_Break.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
+            button_Break.ForeColor = Color.White;
+            button_Break.Location = new Point(216, 9);
+            button_Break.Margin = new Padding(0);
+            button_Break.Name = "button_Break";
+            button_Break.Size = new Size(59, 24);
+            button_Break.TabIndex = 3;
+            button_Break.Text = "przerwa";
+            button_Break.UseVisualStyleBackColor = false;
+            button_Break.Click += button_Break_Click;
+            // 
+            // button_Infolinia
+            // 
+            button_Infolinia.BackColor = Color.Black;
+            button_Infolinia.BackgroundImageLayout = ImageLayout.Center;
+            button_Infolinia.FlatAppearance.BorderColor = Color.White;
+            button_Infolinia.FlatAppearance.BorderSize = 0;
+            button_Infolinia.FlatStyle = FlatStyle.Flat;
+            button_Infolinia.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
+            button_Infolinia.ForeColor = Color.White;
+            button_Infolinia.Location = new Point(283, 9);
+            button_Infolinia.Margin = new Padding(0);
+            button_Infolinia.Name = "button_Infolinia";
+            button_Infolinia.Size = new Size(59, 24);
+            button_Infolinia.TabIndex = 4;
+            button_Infolinia.Text = "infolinia";
+            button_Infolinia.UseVisualStyleBackColor = false;
+            button_Infolinia.Click += button_Infolinia_Click;
             // 
             // WidgetForm
             // 
@@ -185,13 +173,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(244, 244, 244);
             ClientSize = new Size(351, 127);
+            Controls.Add(button_Infolinia);
             Controls.Add(button_Down_Click);
+            Controls.Add(button_Break);
             Controls.Add(button_Up_Click);
             Controls.Add(button_ShowMainWindow);
             Controls.Add(button_StartStop);
             Controls.Add(label_ProjectTime);
             Controls.Add(label_ProjectName);
-            Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "WidgetForm";
             StartPosition = FormStartPosition.CenterScreen;
@@ -200,7 +189,6 @@
             MouseDown += mouseDown_Event;
             MouseMove += mouseMove_Event;
             MouseUp += mouseUp_Event;
-            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -210,12 +198,11 @@
         private Label label_ProjectName;
         private Label label_ProjectTime;
         private Button button_StartStop;
-        private Button button_Break;
-        private Button button_Infolinia;
         private System.Windows.Forms.Timer timer;
         private Button button_ShowMainWindow;
         private Button button_Up_Click;
         private Button button_Down_Click;
-        private Panel panel1;
+        private Button button_Break;
+        private Button button_Infolinia;
     }
 }

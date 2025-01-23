@@ -39,12 +39,15 @@
             button_ShowMainWindow = new Button();
             button_Up_Click = new Button();
             button_Down_Click = new Button();
+            panel1 = new Panel();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // label_ProjectName
             // 
             label_ProjectName.AutoEllipsis = true;
             label_ProjectName.AutoSize = true;
+            label_ProjectName.BackColor = Color.Transparent;
             label_ProjectName.Location = new Point(12, 9);
             label_ProjectName.Name = "label_ProjectName";
             label_ProjectName.Size = new Size(12, 15);
@@ -68,7 +71,7 @@
             button_StartStop.FlatStyle = FlatStyle.Flat;
             button_StartStop.Font = new Font("Arial Th", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
             button_StartStop.ForeColor = Color.White;
-            button_StartStop.Location = new Point(124, 62);
+            button_StartStop.Location = new Point(237, 73);
             button_StartStop.Margin = new Padding(0);
             button_StartStop.Name = "button_StartStop";
             button_StartStop.Size = new Size(60, 40);
@@ -84,12 +87,12 @@
             button_Break.FlatAppearance.BorderColor = Color.White;
             button_Break.FlatAppearance.BorderSize = 0;
             button_Break.FlatStyle = FlatStyle.Flat;
-            button_Break.Font = new Font("Arial Th", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            button_Break.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
             button_Break.ForeColor = Color.White;
-            button_Break.Location = new Point(172, 9);
+            button_Break.Location = new Point(212, 9);
             button_Break.Margin = new Padding(0);
             button_Break.Name = "button_Break";
-            button_Break.Size = new Size(53, 40);
+            button_Break.Size = new Size(59, 24);
             button_Break.TabIndex = 3;
             button_Break.Text = "przerwa";
             button_Break.UseVisualStyleBackColor = false;
@@ -104,7 +107,7 @@
             button_Infolinia.FlatStyle = FlatStyle.Flat;
             button_Infolinia.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
             button_Infolinia.ForeColor = Color.White;
-            button_Infolinia.Location = new Point(242, 9);
+            button_Infolinia.Location = new Point(283, 9);
             button_Infolinia.Margin = new Padding(0);
             button_Infolinia.Name = "button_Infolinia";
             button_Infolinia.Size = new Size(59, 24);
@@ -126,7 +129,7 @@
             button_ShowMainWindow.FlatAppearance.BorderSize = 0;
             button_ShowMainWindow.FlatStyle = FlatStyle.Flat;
             button_ShowMainWindow.Font = new Font("Arial Th", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
-            button_ShowMainWindow.Location = new Point(45, 62);
+            button_ShowMainWindow.Location = new Point(104, 73);
             button_ShowMainWindow.Margin = new Padding(0);
             button_ShowMainWindow.Name = "button_ShowMainWindow";
             button_ShowMainWindow.Size = new Size(60, 40);
@@ -142,7 +145,7 @@
             button_Up_Click.BackgroundImageLayout = ImageLayout.Center;
             button_Up_Click.FlatAppearance.BorderSize = 0;
             button_Up_Click.FlatStyle = FlatStyle.Flat;
-            button_Up_Click.Location = new Point(9, 69);
+            button_Up_Click.Location = new Point(41, 73);
             button_Up_Click.Margin = new Padding(0);
             button_Up_Click.Name = "button_Up_Click";
             button_Up_Click.Size = new Size(20, 16);
@@ -157,7 +160,7 @@
             button_Down_Click.BackgroundImageLayout = ImageLayout.Center;
             button_Down_Click.FlatAppearance.BorderSize = 0;
             button_Down_Click.FlatStyle = FlatStyle.Flat;
-            button_Down_Click.Location = new Point(9, 84);
+            button_Down_Click.Location = new Point(41, 97);
             button_Down_Click.Margin = new Padding(0);
             button_Down_Click.Name = "button_Down_Click";
             button_Down_Click.Size = new Size(20, 16);
@@ -165,20 +168,30 @@
             button_Down_Click.UseVisualStyleBackColor = false;
             button_Down_Click.Click += button_Down_Click_Click;
             // 
+            // panel1
+            // 
+            panel1.BackgroundImage = (Image)resources.GetObject("panel1.BackgroundImage");
+            panel1.Controls.Add(button_Infolinia);
+            panel1.Controls.Add(button_Break);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(351, 66);
+            panel1.TabIndex = 8;
+            // 
             // WidgetForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(244, 244, 244);
-            ClientSize = new Size(320, 110);
+            ClientSize = new Size(351, 127);
             Controls.Add(button_Down_Click);
             Controls.Add(button_Up_Click);
             Controls.Add(button_ShowMainWindow);
-            Controls.Add(button_Infolinia);
-            Controls.Add(button_Break);
             Controls.Add(button_StartStop);
             Controls.Add(label_ProjectTime);
             Controls.Add(label_ProjectName);
+            Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "WidgetForm";
             StartPosition = FormStartPosition.CenterScreen;
@@ -187,6 +200,7 @@
             MouseDown += mouseDown_Event;
             MouseMove += mouseMove_Event;
             MouseUp += mouseUp_Event;
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -202,5 +216,6 @@
         private Button button_ShowMainWindow;
         private Button button_Up_Click;
         private Button button_Down_Click;
+        private Panel panel1;
     }
 }

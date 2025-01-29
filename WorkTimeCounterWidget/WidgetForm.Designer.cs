@@ -37,8 +37,6 @@
             button_ShowMainWindow = new Button();
             button_Up_Click = new Button();
             button_Down_Click = new Button();
-            button_Break = new Button();
-            button_Infolinia = new Button();
             SuspendLayout();
             // 
             // label_ProjectName
@@ -68,9 +66,9 @@
             button_StartStop.FlatAppearance.BorderColor = Color.Red;
             button_StartStop.FlatAppearance.BorderSize = 0;
             button_StartStop.FlatStyle = FlatStyle.Flat;
-            button_StartStop.Font = new Font("Arial Th", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            button_StartStop.Font = new Font("Microsoft Sans Serif", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
             button_StartStop.ForeColor = Color.White;
-            button_StartStop.Location = new Point(237, 73);
+            button_StartStop.Location = new Point(276, 84);
             button_StartStop.Margin = new Padding(0);
             button_StartStop.Name = "button_StartStop";
             button_StartStop.Size = new Size(60, 40);
@@ -91,8 +89,8 @@
             button_ShowMainWindow.FlatAppearance.BorderColor = Color.White;
             button_ShowMainWindow.FlatAppearance.BorderSize = 0;
             button_ShowMainWindow.FlatStyle = FlatStyle.Flat;
-            button_ShowMainWindow.Font = new Font("Arial Th", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
-            button_ShowMainWindow.Location = new Point(104, 73);
+            button_ShowMainWindow.Font = new Font("Microsoft Sans Serif", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            button_ShowMainWindow.Location = new Point(205, 84);
             button_ShowMainWindow.Margin = new Padding(0);
             button_ShowMainWindow.Name = "button_ShowMainWindow";
             button_ShowMainWindow.Size = new Size(60, 40);
@@ -108,7 +106,7 @@
             button_Up_Click.BackgroundImageLayout = ImageLayout.Center;
             button_Up_Click.FlatAppearance.BorderSize = 0;
             button_Up_Click.FlatStyle = FlatStyle.Flat;
-            button_Up_Click.Location = new Point(41, 73);
+            button_Up_Click.Location = new Point(12, 73);
             button_Up_Click.Margin = new Padding(0);
             button_Up_Click.Name = "button_Up_Click";
             button_Up_Click.Size = new Size(20, 16);
@@ -123,7 +121,7 @@
             button_Down_Click.BackgroundImageLayout = ImageLayout.Center;
             button_Down_Click.FlatAppearance.BorderSize = 0;
             button_Down_Click.FlatStyle = FlatStyle.Flat;
-            button_Down_Click.Location = new Point(41, 97);
+            button_Down_Click.Location = new Point(12, 97);
             button_Down_Click.Margin = new Padding(0);
             button_Down_Click.Name = "button_Down_Click";
             button_Down_Click.Size = new Size(20, 16);
@@ -131,51 +129,13 @@
             button_Down_Click.UseVisualStyleBackColor = false;
             button_Down_Click.Click += button_Down_Click_Click;
             // 
-            // button_Break
-            // 
-            button_Break.BackColor = Color.Black;
-            button_Break.BackgroundImageLayout = ImageLayout.Center;
-            button_Break.FlatAppearance.BorderColor = Color.White;
-            button_Break.FlatAppearance.BorderSize = 0;
-            button_Break.FlatStyle = FlatStyle.Flat;
-            button_Break.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
-            button_Break.ForeColor = Color.White;
-            button_Break.Location = new Point(216, 9);
-            button_Break.Margin = new Padding(0);
-            button_Break.Name = "button_Break";
-            button_Break.Size = new Size(59, 24);
-            button_Break.TabIndex = 3;
-            button_Break.Text = "przerwa";
-            button_Break.UseVisualStyleBackColor = false;
-            button_Break.Click += button_Break_Click;
-            // 
-            // button_Infolinia
-            // 
-            button_Infolinia.BackColor = Color.Black;
-            button_Infolinia.BackgroundImageLayout = ImageLayout.Center;
-            button_Infolinia.FlatAppearance.BorderColor = Color.White;
-            button_Infolinia.FlatAppearance.BorderSize = 0;
-            button_Infolinia.FlatStyle = FlatStyle.Flat;
-            button_Infolinia.Font = new Font("Arial Th", 10F, FontStyle.Bold, GraphicsUnit.Pixel, 238);
-            button_Infolinia.ForeColor = Color.White;
-            button_Infolinia.Location = new Point(283, 9);
-            button_Infolinia.Margin = new Padding(0);
-            button_Infolinia.Name = "button_Infolinia";
-            button_Infolinia.Size = new Size(59, 24);
-            button_Infolinia.TabIndex = 4;
-            button_Infolinia.Text = "infolinia";
-            button_Infolinia.UseVisualStyleBackColor = false;
-            button_Infolinia.Click += button_Infolinia_Click;
-            // 
             // WidgetForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(244, 244, 244);
-            ClientSize = new Size(351, 127);
-            Controls.Add(button_Infolinia);
+            ClientSize = new Size(345, 158);
             Controls.Add(button_Down_Click);
-            Controls.Add(button_Break);
             Controls.Add(button_Up_Click);
             Controls.Add(button_ShowMainWindow);
             Controls.Add(button_StartStop);
@@ -202,7 +162,5 @@
         private Button button_ShowMainWindow;
         private Button button_Up_Click;
         private Button button_Down_Click;
-        private Button button_Break;
-        private Button button_Infolinia;
     }
 }

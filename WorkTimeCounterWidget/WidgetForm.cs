@@ -35,6 +35,11 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
+        private int borderThickness = 4;
+
+        private RoundedButton button_Break;
+        private RoundedButton button_Infolinia;
+
         public WidgetForm()
         {
             InitializeComponent();
@@ -46,6 +51,25 @@ namespace WorkTimeCounterWidget
             //PrivateFontCollection pfc = new PrivateFontCollection();
             //pfc.AddFontFile("C:\\Users\\user\\source\\repos\\WorkTimeCounterWidget\\WorkTimeCounterWidget\\Fonts\\Technology.ttf");
             //label_ProjectTime.Font = new Font(pfc.Families[0], 16, FontStyle.Regular);
+
+            button_Break = new RoundedButton
+            {
+                Text = "przerwa",
+                Location = new Point(50, 50), // Pozycja przycisku
+            };
+
+            button_Infolinia = new RoundedButton
+            {
+                Text = "infolinia",
+                Location = new Point(50, 100), // Pozycja przycisku
+            };
+
+            this.Controls.Add(button_Break);
+            this.Controls.Add(button_Infolinia);
+
+            // Obsługa zdarzeń kliknięcia (opcjonalnie)
+            button_Break.Click += button_Break_Click;
+            button_Infolinia.Click += button_Infolinia_Click;
 
             fontManager = new FontManager();
             try
@@ -294,79 +318,89 @@ namespace WorkTimeCounterWidget
         }
 
         protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            Graphics g = e.Graphics;
+
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            // Rysowanie tła
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string imagePath = Path.Combine(appDirectory, "Images", "bg.jpg");
+            if (File.Exists(imagePath))
             {
-                base.OnPaint(e);
-
-                Graphics g = e.Graphics;
-
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string imagePath = Path.Combine(appDirectory, "Images", "bg.jpg");
-                if (File.Exists(imagePath))
+                using (Image backgroundImage = Image.FromFile(imagePath))
                 {
-                    using (Image backgroundImage = Image.FromFile(imagePath))
-                    {
-                        Rectangle imageRectangle = new Rectangle(0, 0, this.Width, this.Height / 2);
-                        g.DrawImage(backgroundImage, imageRectangle);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Nie znaleziono obrazka: " + imagePath);
-                }
-
-                using (SolidBrush whiteBrush = new SolidBrush(Color.White))
-                {
-                    g.FillRectangle(whiteBrush, new Rectangle(0, this.Height / 2, this.Width, this.Height / 2));
-                }
-
-                using (Pen borderPen = new Pen(Color.Black, 3))
-                {
-                    using (GraphicsPath borderPath = GetRoundedRectanglePath(new Rectangle(0, 0, this.Width - 1, this.Height - 1), 20))
-                    {
-                        g.DrawPath(borderPen, borderPath);
-                    }
+                    Rectangle imageRectangle = new Rectangle(0, 0, this.Width, this.Height / 2);
+                    g.DrawImage(backgroundImage, imageRectangle);
                 }
             }
-
-            // Funkcja do tworzenia zaokrąglonego prostokąta
-            private GraphicsPath GetRoundedRectanglePath(Rectangle rect, int cornerRadius)
+            else
             {
-                GraphicsPath path = new GraphicsPath();
-
-                // Górny-lewy łuk
-                path.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
-
-                // Górna linia
-                path.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius, rect.Y);
-
-                // Górny-prawy łuk
-                path.AddArc(rect.Right - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
-
-                // Prawa linia
-                path.AddLine(rect.Right, rect.Y + cornerRadius, rect.Right, rect.Bottom - cornerRadius);
-
-                // Dolny-prawy łuk
-                path.AddArc(rect.Right - cornerRadius * 2, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
-
-                // Dolna linia
-                path.AddLine(rect.Right - cornerRadius, rect.Bottom, rect.X + cornerRadius, rect.Bottom);
-
-                // Dolny-lewy łuk
-                path.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
-
-                // Lewa linia
-                path.AddLine(rect.X, rect.Bottom - cornerRadius, rect.X, rect.Y + cornerRadius);
-
-                path.CloseFigure();
-
-                return path;
+                MessageBox.Show("Nie znaleziono obrazka: " + imagePath);
             }
 
+            using (SolidBrush whiteBrush = new SolidBrush(Color.White))
+            {
+                g.FillRectangle(whiteBrush, new Rectangle(0, this.Height / 2, this.Width, this.Height / 2));
+            }
+
+            // Rysowanie bordera
+            using (Pen borderPen = new Pen(Color.Black, borderThickness))
+            {
+                // Dostosowanie rozmiaru prostokąta do grubości bordera
+                Rectangle borderRect = new Rectangle(
+                    borderThickness / 2,
+                    borderThickness / 2,
+                    this.Width - (borderThickness + borderThickness / 2),
+                    this.Height - (borderThickness + borderThickness / 2)
+                );
+
+                // Tworzenie zaokrąglonego prostokąta i rysowanie bordera
+                using (GraphicsPath borderPath = GetRoundedRectanglePath(borderRect, 10))
+                {
+                    g.DrawPath(borderPen, borderPath);
+                }
+            }
+        }
+
+        private GraphicsPath GetRoundedRectanglePath(Rectangle rect, int cornerRadius)
+        {
+            GraphicsPath path = new GraphicsPath();
+
+            // Górny-lewy łuk
+            path.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
+
+            // Górna linia
+            path.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius, rect.Y);
+
+            // Górny-prawy łuk
+            path.AddArc(rect.Right - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
+
+            // Prawa linia
+            path.AddLine(rect.Right, rect.Y + cornerRadius, rect.Right, rect.Bottom - cornerRadius);
+
+            // Dolny-prawy łuk
+            path.AddArc(rect.Right - cornerRadius * 2, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
+
+            // Dolna linia
+            path.AddLine(rect.Right - cornerRadius, rect.Bottom, rect.X + cornerRadius, rect.Bottom);
+
+            // Dolny-lewy łuk
+            path.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
+
+            // Lewa linia
+            path.AddLine(rect.X, rect.Bottom - cornerRadius, rect.X, rect.Y + cornerRadius);
+
+            path.CloseFigure();
+
+            return path;
+        }
 
 
-}
+
+    }
 
 public class FontManager
     {

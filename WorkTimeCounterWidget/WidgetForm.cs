@@ -37,9 +37,6 @@ namespace WorkTimeCounterWidget
 
         private int borderThickness = 4;
 
-        private RoundedButton button_Break;
-        private RoundedButton button_Infolinia;
-
         public WidgetForm()
         {
             InitializeComponent();
@@ -51,25 +48,6 @@ namespace WorkTimeCounterWidget
             //PrivateFontCollection pfc = new PrivateFontCollection();
             //pfc.AddFontFile("C:\\Users\\user\\source\\repos\\WorkTimeCounterWidget\\WorkTimeCounterWidget\\Fonts\\Technology.ttf");
             //label_ProjectTime.Font = new Font(pfc.Families[0], 16, FontStyle.Regular);
-
-            button_Break = new RoundedButton
-            {
-                Text = "przerwa",
-                Location = new Point(50, 50), // Pozycja przycisku
-            };
-
-            button_Infolinia = new RoundedButton
-            {
-                Text = "infolinia",
-                Location = new Point(50, 100), // Pozycja przycisku
-            };
-
-            this.Controls.Add(button_Break);
-            this.Controls.Add(button_Infolinia);
-
-            // Obsługa zdarzeń kliknięcia (opcjonalnie)
-            button_Break.Click += button_Break_Click;
-            button_Infolinia.Click += button_Infolinia_Click;
 
             fontManager = new FontManager();
             try

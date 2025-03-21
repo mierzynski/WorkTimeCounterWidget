@@ -35,7 +35,7 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
-        private int borderThickness = 4;
+        private int borderThickness = 5;
 
         public WidgetForm()
         {
@@ -294,88 +294,6 @@ namespace WorkTimeCounterWidget
             mouseDown = false;
 
         }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            Graphics g = e.Graphics;
-
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            // Rysowanie tła
-            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string imagePath = Path.Combine(appDirectory, "Images", "bg.jpg");
-            if (File.Exists(imagePath))
-            {
-                using (Image backgroundImage = Image.FromFile(imagePath))
-                {
-                    Rectangle imageRectangle = new Rectangle(0, 0, this.Width, this.Height / 2);
-                    g.DrawImage(backgroundImage, imageRectangle);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Nie znaleziono obrazka: " + imagePath);
-            }
-
-            using (SolidBrush whiteBrush = new SolidBrush(Color.White))
-            {
-                g.FillRectangle(whiteBrush, new Rectangle(0, this.Height / 2, this.Width, this.Height / 2));
-            }
-
-            // Rysowanie bordera
-            using (Pen borderPen = new Pen(Color.Black, borderThickness))
-            {
-                // Dostosowanie rozmiaru prostokąta do grubości bordera
-                Rectangle borderRect = new Rectangle(
-                    borderThickness / 2,
-                    borderThickness / 2,
-                    this.Width - (borderThickness + borderThickness / 2),
-                    this.Height - (borderThickness + borderThickness / 2)
-                );
-
-                // Tworzenie zaokrąglonego prostokąta i rysowanie bordera
-                using (GraphicsPath borderPath = GetRoundedRectanglePath(borderRect, 10))
-                {
-                    g.DrawPath(borderPen, borderPath);
-                }
-            }
-        }
-
-        private GraphicsPath GetRoundedRectanglePath(Rectangle rect, int cornerRadius)
-        {
-            GraphicsPath path = new GraphicsPath();
-
-            // Górny-lewy łuk
-            path.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
-
-            // Górna linia
-            path.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius, rect.Y);
-
-            // Górny-prawy łuk
-            path.AddArc(rect.Right - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
-
-            // Prawa linia
-            path.AddLine(rect.Right, rect.Y + cornerRadius, rect.Right, rect.Bottom - cornerRadius);
-
-            // Dolny-prawy łuk
-            path.AddArc(rect.Right - cornerRadius * 2, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
-
-            // Dolna linia
-            path.AddLine(rect.Right - cornerRadius, rect.Bottom, rect.X + cornerRadius, rect.Bottom);
-
-            // Dolny-lewy łuk
-            path.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
-
-            // Lewa linia
-            path.AddLine(rect.X, rect.Bottom - cornerRadius, rect.X, rect.Y + cornerRadius);
-
-            path.CloseFigure();
-
-            return path;
-        }
-
 
 
     }

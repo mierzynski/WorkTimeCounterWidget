@@ -75,6 +75,8 @@ namespace WorkTimeCounterWidget
 
             detailsForm.Hide();
             detailsForm.LoadProjectsFromFile();
+
+
         }
 
         public void UpdateCurrentProject()

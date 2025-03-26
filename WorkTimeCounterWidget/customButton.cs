@@ -1,13 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
+using System.IO;
 using System.Windows.Forms;
 
 namespace WorkTimeCounterWidget
 {
-    public class RoundedButton_horizontal : Button
+    public class RoundedButton_horizontal : PictureBox
     {
         public enum ButtonLocation { Left, Mid, Right }
 
@@ -23,19 +21,17 @@ namespace WorkTimeCounterWidget
             set
             {
                 _location = value;
-                UpdateImages(); // Zmienia obrazy w zależności od stanu
+                UpdateImages();
             }
         }
 
         public RoundedButton_horizontal()
         {
-            this.FlatStyle = FlatStyle.Flat;
-            this.FlatAppearance.BorderSize = 0;
+            this.SizeMode = PictureBoxSizeMode.StretchImage; // Obrazek dopasowuje się do rozmiaru
             this.BackColor = Color.Transparent;
-            this.LocationState = ButtonLocation.Mid; // Domyślnie ustawione na środek
+            this.LocationState = ButtonLocation.Mid;
 
-            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            _imageFolderPath = Path.Combine(appDirectory, "Images");
+            _imageFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
 
             this.MouseEnter += (s, e) => this.Image = _hoverImage;
             this.MouseLeave += (s, e) => this.Image = _normalImage;
@@ -52,21 +48,21 @@ namespace WorkTimeCounterWidget
                 switch (LocationState)
                 {
                     case ButtonLocation.Left:
-                        _normalImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
-                        _hoverImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_hover.png"));
-                        _clickImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
+                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_normal.png"));
+                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_hover.png"));
+                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_click.png"));
                         break;
 
                     case ButtonLocation.Mid:
-                        _normalImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
-                        _hoverImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_hover.png"));
-                        _clickImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
+                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_normal.png"));
+                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_hover.png"));
+                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_click.png"));
                         break;
 
                     case ButtonLocation.Right:
-                        _normalImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
-                        _hoverImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_hover.png"));
-                        _clickImage = Image.FromFile(Path.Combine(appDirectory, "Images", "mid_normal.png"));
+                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_normal.png"));
+                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_hover.png"));
+                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_click.png"));
                         break;
                 }
 
@@ -91,8 +87,7 @@ namespace WorkTimeCounterWidget
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            UpdateImages(); // Ponowne przeskalowanie obrazów przy zmianie rozmiaru
+            UpdateImages();
         }
-
     }
 }

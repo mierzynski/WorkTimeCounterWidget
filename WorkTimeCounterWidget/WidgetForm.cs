@@ -37,6 +37,10 @@ namespace WorkTimeCounterWidget
 
         private int borderThickness = 5;
 
+        private RoundedButton_horizontal button_ShowMainWindow;
+        private RoundedButton_horizontal button_Infolinia;
+        private RoundedButton_horizontal button_Break;
+        private RoundedButton_horizontal button_StartStop;
         public WidgetForm()
         {
             InitializeComponent();
@@ -76,8 +80,78 @@ namespace WorkTimeCounterWidget
             detailsForm.Hide();
             detailsForm.LoadProjectsFromFile();
 
-
+            AddCustomButtons();
         }
+
+        private void AddCustomButtons()
+        {
+            int buttonWidth = 35;
+            int buttonHeight = 24;
+            int marginRight = 3;
+
+            button_ShowMainWindow = new RoundedButton_horizontal
+            {
+                Size = new Size(buttonWidth + 3, buttonHeight),
+                LocationState = RoundedButton_horizontal.ButtonLocation.Right
+            };
+            button_ShowMainWindow.Click += button_ShowMainWindow_Click;
+            this.Controls.Add(button_ShowMainWindow);
+
+            button_Infolinia = new RoundedButton_horizontal
+            {
+                Size = new Size(buttonWidth, buttonHeight),
+                LocationState = RoundedButton_horizontal.ButtonLocation.Mid
+            };
+            button_Infolinia.Click += button_Infolinia_Click;
+            this.Controls.Add(button_Infolinia);
+
+            button_Break = new RoundedButton_horizontal
+            {
+                Size = new Size(buttonWidth, buttonHeight),
+                LocationState = RoundedButton_horizontal.ButtonLocation.Mid
+            };
+            button_Break.Click += button_Break_Click;
+            this.Controls.Add(button_Break);
+
+            button_StartStop = new RoundedButton_horizontal
+            {
+                Size = new Size(buttonWidth, buttonHeight),
+                LocationState = RoundedButton_horizontal.ButtonLocation.Left
+            };
+            button_StartStop.Click += button_StartStop_Click;
+            this.Controls.Add(button_StartStop);
+
+            UpdateButtonPositions();
+
+            this.Resize += (s, e) => UpdateButtonPositions();
+        }
+
+
+        private void UpdateButtonPositions()
+        {
+            int marginRight = 3;
+
+            button_ShowMainWindow.Location = new Point(
+                this.ClientSize.Width - button_ShowMainWindow.Width - marginRight,
+                (this.ClientSize.Height - button_ShowMainWindow.Height) / 2
+            );
+
+            button_Infolinia.Location = new Point(
+                button_ShowMainWindow.Location.X - button_Infolinia.Width,
+                button_ShowMainWindow.Location.Y
+            );
+
+            button_Break.Location = new Point(
+                button_Infolinia.Location.X - button_Break.Width,
+                button_Infolinia.Location.Y
+            );
+
+            button_StartStop.Location = new Point(
+                button_Break.Location.X - button_StartStop.Width,
+                button_Break.Location.Y
+            );
+        }
+
 
         public void UpdateCurrentProject()
         {
@@ -105,14 +179,14 @@ namespace WorkTimeCounterWidget
                 timer.Stop();
                 isProjectRunning = false;
                 button_StartStop.Text = "PAUSED";
-                button_StartStop.BackColor = ColorTranslator.FromHtml("#FF0000");
+                //button_StartStop.BackColor = ColorTranslator.FromHtml("#FF0000");
             }
             else
             {
                 timer.Start();
                 isProjectRunning = true;
                 button_StartStop.Text = "STARTED";
-                button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+                //button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
             }
 
             isTimerRunning = !isTimerRunning;
@@ -135,10 +209,10 @@ namespace WorkTimeCounterWidget
                 }
 
                 button_StartStop.Enabled = true;
-                button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+                //button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
                 button_Infolinia.Enabled = true;
-                button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
-                button_Break.BackColor = Color.FromArgb(64, 64, 64);
+                //button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
+                //button_Break.BackColor = Color.FromArgb(64, 64, 64);
             }
             else
             {
@@ -151,10 +225,10 @@ namespace WorkTimeCounterWidget
                 label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
 
                 button_StartStop.Enabled = false;
-                button_StartStop.BackColor = Color.Gray;
+                //button_StartStop.BackColor = Color.Gray;
                 button_Infolinia.Enabled = false;
-                button_Infolinia.BackColor = Color.Gray;
-                button_Break.BackColor = ColorTranslator.FromHtml("#008000");
+                //button_Infolinia.BackColor = Color.Gray;
+                //button_Break.BackColor = ColorTranslator.FromHtml("#008000");
             }
         }
 
@@ -178,12 +252,12 @@ namespace WorkTimeCounterWidget
 
                 // Aktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = true;
-                button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
+                //button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
                 button_Break.Enabled = true;
-                button_Break.BackColor = Color.FromArgb(64, 64, 64);
+                //button_Break.BackColor = Color.FromArgb(64, 64, 64);
 
                 // Zmieniamy kolor przycisku infolinii
-                button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
+                //button_Infolinia.BackColor = Color.FromArgb(64, 64, 64);
             }
             else
             {
@@ -197,12 +271,12 @@ namespace WorkTimeCounterWidget
 
                 // Dezaktywujemy przycisk Start/Stop
                 button_StartStop.Enabled = false;
-                button_StartStop.BackColor = Color.Gray;
+                //button_StartStop.BackColor = Color.Gray;
                 button_Break.Enabled = false;
-                button_Break.BackColor = Color.Gray;
+                //button_Break.BackColor = Color.Gray;
 
                 // Zmieniamy kolor przycisku infolinii
-                button_Infolinia.BackColor = ColorTranslator.FromHtml("#008000");
+                //button_Infolinia.BackColor = ColorTranslator.FromHtml("#008000");
             }
         }
 
@@ -250,7 +324,7 @@ namespace WorkTimeCounterWidget
         }
 
 
-        private void button_ShowMainWindow_Click_1(object sender, EventArgs e)
+        private void button_ShowMainWindow_Click(object sender, EventArgs e)
         {
 
             if (detailsForm.Visible)

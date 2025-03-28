@@ -120,23 +120,4 @@
   <metadata name="timer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="button_Up_Click.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
-        qAAAAKgBefSzxgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAB5SURBVDhPpdDB
-        CYAwDAXQTCYUBxE8CG7hrIJrGBNIKrW/aGrgHfrbn0OJmX+BYQQMI2DoZEaR0J2DoZJZxWlm9Ebh8C7r
-        QTWX1EFddnBJeWiXXbUkUnbFkmjZ5SU6iwXPR2+0Mwk6LOixC0pi6zTkT+wFwwgYfsd0AdxzG1RFo9nK
-        AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="button_Down_Click.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
-        qAAAAKgBefSzxgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACKSURBVDhPpdDb
-        CYAwDAXQrFZ0D8E/3yu4q+AY1iSk0mrURgvnw9vcQAXv/S9qaKGGFnRKNH/kEKyIVn2xIOijwGJDVXjH
-        JGEuKtfcjX7GKJdvjnKyQJYMMnQnKXMn/uAAoJPhs0uZ588BhwCtlB7LPKuFBE8jxdsyUcMAT4Gcdheo
-        oYUaWqhhPg87X+sbeovvldoAAAAASUVORK5CYII=
-</value>
-  </data>
 </root>

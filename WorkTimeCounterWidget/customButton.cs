@@ -5,15 +5,16 @@ using System.Windows.Forms;
 
 namespace WorkTimeCounterWidget
 {
-    public class RoundedButton_horizontal : PictureBox
+    public class CustomButton : PictureBox
     {
-        public enum ButtonLocation { Left, Mid, Right }
+        public enum ButtonLocation { Left, Mid, Right, Up, Down }
+        public enum ButtonOrientation { Horizontal, Vertical }
 
         private ButtonLocation _location;
+        private ButtonOrientation _orientation;
         private Image _normalImage;
         private Image _hoverImage;
         private Image _clickImage;
-        private readonly string _imageFolderPath;
 
         public ButtonLocation LocationState
         {
@@ -25,13 +26,22 @@ namespace WorkTimeCounterWidget
             }
         }
 
-        public RoundedButton_horizontal()
+        public ButtonOrientation Orientation
         {
-            this.SizeMode = PictureBoxSizeMode.StretchImage; // Obrazek dopasowuje się do rozmiaru
+            get { return _orientation; }
+            set
+            {
+                _orientation = value;
+                UpdateImages();
+            }
+        }
+
+        public CustomButton()
+        {
+            this.SizeMode = PictureBoxSizeMode.StretchImage;
             this.BackColor = Color.Transparent;
             this.LocationState = ButtonLocation.Mid;
-
-            _imageFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
+            this.Orientation = ButtonOrientation.Horizontal; // Domyślnie poziomy
 
             this.MouseEnter += (s, e) => this.Image = _hoverImage;
             this.MouseLeave += (s, e) => this.Image = _normalImage;
@@ -44,26 +54,47 @@ namespace WorkTimeCounterWidget
             try
             {
                 string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string imageFolder = Path.Combine(appDirectory, "Images");
 
-                switch (LocationState)
+                if (Orientation == ButtonOrientation.Horizontal)
                 {
-                    case ButtonLocation.Left:
-                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_normal.png"));
-                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_hover.png"));
-                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "left_click.png"));
-                        break;
+                    switch (LocationState)
+                    {
+                        case ButtonLocation.Left:
+                            _normalImage = LoadAndResizeImage(Path.Combine(imageFolder, "left_normal.png"));
+                            _hoverImage = LoadAndResizeImage(Path.Combine(imageFolder, "left_hover.png"));
+                            _clickImage = LoadAndResizeImage(Path.Combine(imageFolder, "left_click.png"));
+                            break;
 
-                    case ButtonLocation.Mid:
-                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_normal.png"));
-                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_hover.png"));
-                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "mid_click.png"));
-                        break;
+                        case ButtonLocation.Mid:
+                            _normalImage = LoadAndResizeImage(Path.Combine(imageFolder, "mid_normal.png"));
+                            _hoverImage = LoadAndResizeImage(Path.Combine(imageFolder, "mid_hover.png"));
+                            _clickImage = LoadAndResizeImage(Path.Combine(imageFolder, "mid_click.png"));
+                            break;
 
-                    case ButtonLocation.Right:
-                        _normalImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_normal.png"));
-                        _hoverImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_hover.png"));
-                        _clickImage = LoadAndResizeImage(Path.Combine(appDirectory, "Images", "right_click.png"));
-                        break;
+                        case ButtonLocation.Right:
+                            _normalImage = LoadAndResizeImage(Path.Combine(imageFolder, "right_normal.png"));
+                            _hoverImage = LoadAndResizeImage(Path.Combine(imageFolder, "right_hover.png"));
+                            _clickImage = LoadAndResizeImage(Path.Combine(imageFolder, "right_click.png"));
+                            break;
+                    }
+                }
+                else if (Orientation == ButtonOrientation.Vertical)
+                {
+                    switch (LocationState)
+                    {
+                        case ButtonLocation.Up:
+                            _normalImage = LoadAndResizeImage(Path.Combine(imageFolder, "up_normal.png"));
+                            _hoverImage = LoadAndResizeImage(Path.Combine(imageFolder, "up_hover.png"));
+                            _clickImage = LoadAndResizeImage(Path.Combine(imageFolder, "up_click.png"));
+                            break;
+
+                        case ButtonLocation.Down:
+                            _normalImage = LoadAndResizeImage(Path.Combine(imageFolder, "down_normal.png"));
+                            _hoverImage = LoadAndResizeImage(Path.Combine(imageFolder, "down_hover.png"));
+                            _clickImage = LoadAndResizeImage(Path.Combine(imageFolder, "down_click.png"));
+                            break;
+                    }
                 }
 
                 this.Image = _normalImage;

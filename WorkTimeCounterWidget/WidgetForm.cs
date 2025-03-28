@@ -35,19 +35,19 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
-        private int borderThickness = 5;
-
-        private RoundedButton_horizontal button_ShowMainWindow;
-        private RoundedButton_horizontal button_Infolinia;
-        private RoundedButton_horizontal button_Break;
-        private RoundedButton_horizontal button_StartStop;
+        private CustomButton button_ShowMainWindow;
+        private CustomButton button_Infolinia;
+        private CustomButton button_Break;
+        private CustomButton button_StartStop;
+        private CustomButton button_Up;
+        private CustomButton button_Down;
         public WidgetForm()
         {
             InitializeComponent();
 
             //zaokrąglenie formularza
             this.FormBorderStyle = FormBorderStyle.None;
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
 
             //PrivateFontCollection pfc = new PrivateFontCollection();
             //pfc.AddFontFile("C:\\Users\\user\\source\\repos\\WorkTimeCounterWidget\\WorkTimeCounterWidget\\Fonts\\Technology.ttf");
@@ -85,55 +85,93 @@ namespace WorkTimeCounterWidget
 
         private void AddCustomButtons()
         {
-            int buttonWidth = 35;
-            int buttonHeight = 24;
-            int marginRight = 3;
+            int buttonWidthHorizontal = 35;
+            int buttonHeightHorizontal = 24;
 
-            button_ShowMainWindow = new RoundedButton_horizontal
+            int buttonHeightVertical = this.ClientSize.Height / 2;
+            int buttonWidthVertical = GetScaledWidth("Images/down_normal.png", buttonHeightVertical);
+            int margin = 3;
+
+            button_ShowMainWindow = new CustomButton
             {
-                Size = new Size(buttonWidth + 3, buttonHeight),
-                LocationState = RoundedButton_horizontal.ButtonLocation.Right
+                Size = new Size(buttonWidthHorizontal + 3, buttonHeightHorizontal),
+                LocationState = CustomButton.ButtonLocation.Right,
+                Orientation = CustomButton.ButtonOrientation.Horizontal
             };
             button_ShowMainWindow.Click += button_ShowMainWindow_Click;
             this.Controls.Add(button_ShowMainWindow);
 
-            button_Infolinia = new RoundedButton_horizontal
+            button_Infolinia = new CustomButton
             {
-                Size = new Size(buttonWidth, buttonHeight),
-                LocationState = RoundedButton_horizontal.ButtonLocation.Mid
+                Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal),
+                LocationState = CustomButton.ButtonLocation.Mid,
+                Orientation = CustomButton.ButtonOrientation.Horizontal
             };
             button_Infolinia.Click += button_Infolinia_Click;
             this.Controls.Add(button_Infolinia);
 
-            button_Break = new RoundedButton_horizontal
+            button_Break = new CustomButton
             {
-                Size = new Size(buttonWidth, buttonHeight),
-                LocationState = RoundedButton_horizontal.ButtonLocation.Mid
+                Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal),
+                LocationState = CustomButton.ButtonLocation.Mid,
+                Orientation = CustomButton.ButtonOrientation.Horizontal
             };
             button_Break.Click += button_Break_Click;
             this.Controls.Add(button_Break);
 
-            button_StartStop = new RoundedButton_horizontal
+            button_StartStop = new CustomButton
             {
-                Size = new Size(buttonWidth, buttonHeight),
-                LocationState = RoundedButton_horizontal.ButtonLocation.Left
+                Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal),
+                LocationState = CustomButton.ButtonLocation.Left,
+                Orientation = CustomButton.ButtonOrientation.Horizontal
             };
             button_StartStop.Click += button_StartStop_Click;
             this.Controls.Add(button_StartStop);
+
+            // Przycisk UP
+            button_Up = new CustomButton
+            {
+                Size = new Size(buttonWidthVertical, buttonHeightVertical),
+                LocationState = CustomButton.ButtonLocation.Up,
+                Orientation = CustomButton.ButtonOrientation.Vertical,
+            };
+            button_Up.Click += button_Up_Click;
+            this.Controls.Add(button_Up);
+
+            // Przycisk DOWN
+            button_Down = new CustomButton
+            {
+                Size = new Size(buttonWidthVertical, buttonHeightVertical),
+                LocationState = CustomButton.ButtonLocation.Down,
+                Orientation = CustomButton.ButtonOrientation.Vertical,
+            };
+            button_Down.Click += button_Down_Click;
+            this.Controls.Add(button_Down);
 
             UpdateButtonPositions();
 
             this.Resize += (s, e) => UpdateButtonPositions();
         }
 
+        // Funkcja do obliczania szerokości zachowując proporcje
+        private int GetScaledWidth(string imagePath, int newHeight)
+        {
+            if (!File.Exists(imagePath)) return 50; // Domyślna szerokość, jeśli obraz nie istnieje
+
+            using (Image img = Image.FromFile(imagePath))
+            {
+                float aspectRatio = (float)img.Width / img.Height;
+                return (int)(newHeight * aspectRatio);
+            }
+        }
 
         private void UpdateButtonPositions()
         {
-            int marginRight = 3;
+            int margin = 3;
 
             button_ShowMainWindow.Location = new Point(
-                this.ClientSize.Width - button_ShowMainWindow.Width - marginRight,
-                (this.ClientSize.Height - button_ShowMainWindow.Height) / 2
+                this.ClientSize.Width - button_ShowMainWindow.Width - margin,
+                margin
             );
 
             button_Infolinia.Location = new Point(
@@ -149,6 +187,16 @@ namespace WorkTimeCounterWidget
             button_StartStop.Location = new Point(
                 button_Break.Location.X - button_StartStop.Width,
                 button_Break.Location.Y
+            );
+
+            button_Down.Location = new Point(
+                margin,
+                button_Up.Location.Y + button_Up.Height
+            );
+
+            button_Up.Location = new Point(
+                margin,
+                0
             );
         }
 
@@ -307,7 +355,7 @@ namespace WorkTimeCounterWidget
 
 
 
-        private void button_Up_Click_Click(object sender, EventArgs e)
+        private void button_Up_Click(object sender, EventArgs e)
         {
             if (projects.Count == 0 || isTimerRunning) return;  // Sprawdzamy, czy czas jest aktywny
 
@@ -315,7 +363,7 @@ namespace WorkTimeCounterWidget
             UpdateCurrentProject();
         }
 
-        private void button_Down_Click_Click(object sender, EventArgs e)
+        private void button_Down_Click(object sender, EventArgs e)
         {
             if (projects.Count == 0 || isTimerRunning) return;  // Sprawdzamy, czy czas jest aktywny
 

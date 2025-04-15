@@ -6,6 +6,7 @@ using System.Drawing.Text;
 using System.Reflection.Emit;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using WinFormsLabel = System.Windows.Forms.Label;
 
 namespace WorkTimeCounterWidget
 {
@@ -35,15 +36,44 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
+        private Color defaultBackColor = ColorTranslator.FromHtml("#202020");
+
         private CustomButton button_ShowMainWindow;
         private CustomButton button_Infolinia;
         private CustomButton button_Break;
         private CustomButton button_StartStop;
         private CustomButton button_Up;
         private CustomButton button_Down;
+        private PictureBox pictureBox_digitalScreen;
+        private WinFormsLabel label_ProjectName;
+        private WinFormsLabel label_ProjectTime;
+        private WinFormsLabel label_Hours;
+        private WinFormsLabel label_Mins;
+        private WinFormsLabel label_Secs;
+
+        private int margin = 3;
+        private int buttonWidthHorizontal;
+        private int buttonHeightHorizontal;
+
+        private int buttonHeightVertical;
+        private int buttonWidthVertical;
+
+        private readonly int minFormWidth = 310;
+        private readonly int minFormHeight = 30;
+        private readonly int baseButtonWidthHorizontal = 35;
+        private readonly int baseButtonHeightHorizontal = 24;
+        private readonly int baseButtonMargin = 3;
+
+
         public WidgetForm()
         {
             InitializeComponent();
+
+            this.MouseDoubleClick += Form_MouseDoubleClick;
+            this.Resize += Form_Resize;
+            this.MinimumSize = new Size(minFormWidth, minFormHeight);
+
+
 
             //zaokrąglenie formularza
             this.FormBorderStyle = FormBorderStyle.None;
@@ -61,7 +91,7 @@ namespace WorkTimeCounterWidget
 
                 fontManager.LoadFontsFromFolder(fontsFolder);
 
-                label_ProjectTime.Font = fontManager.GetFont("Technology", 16, FontStyle.Regular);
+                //label_ProjectTime.Font = fontManager.GetFont("Technology", 16, FontStyle.Regular);
             }
             catch (Exception ex)
             {
@@ -71,26 +101,178 @@ namespace WorkTimeCounterWidget
 
             detailsForm = new DetailsForm();
 
-            detailsForm.ProjectsUpdated += projects =>
-            {
-                this.projects = projects;
-                UpdateCurrentProject();
-            };
 
             detailsForm.Hide();
             detailsForm.LoadProjectsFromFile();
 
             AddCustomButtons();
+            AddDigitalScreen();
+            UpdateButtonPositions();
+
+            detailsForm.ProjectsUpdated += projects =>
+            {
+                this.projects = projects;
+                UpdateCurrentProject();
+            };
         }
+
+        private void Form_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            isResizeModeEnabled = !isResizeModeEnabled;
+
+            if (isResizeModeEnabled)
+            {
+                this.Cursor = Cursors.SizeNWSE;
+                this.BackColor = Color.DarkRed;
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
+                this.BackColor = defaultBackColor;
+            }
+        }
+
+
+
+        private void Form_Resize(object sender, EventArgs e)
+        {
+            // Na przykład: przeliczenie layoutu, odświeżenie zaokrągleń itp.
+            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
+            //UpdateButtonPositions();
+        }
+
+        private void AddDigitalScreen()
+        {
+            int pictureBoxWidth = this.ClientSize.Width - ((2 * margin) + buttonWidthVertical + buttonWidthHorizontal * 4);
+            int pictureBoxHeight = button_Up.Height + button_Down.Height;
+
+            pictureBox_digitalScreen = new PictureBox
+            {
+                Size = new Size(pictureBoxWidth, pictureBoxHeight),
+                BackColor = ColorTranslator.FromHtml("#202020"),
+                Location = new Point(
+                    button_Up.Location.X + button_Up.Width + margin,
+                    button_Up.Location.Y + (button_Up.Height / 2) - (pictureBoxHeight / 2)
+                )
+            };
+
+            int halfWidth = pictureBoxWidth / 2;
+            int upperHeight = (int)(pictureBoxHeight * 0.7);
+            int lowerHeight = pictureBoxHeight - upperHeight;
+            int thirdWidth = halfWidth / 3;
+
+            // label_ProjectTime
+            label_ProjectTime = new WinFormsLabel
+            {
+                Text = "00:00:00",
+                ForeColor = Color.White,
+                BackColor = Color.Blue,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(0, 0),
+                Size = new Size(halfWidth, upperHeight)
+            };
+           //AdjustFontToLabel(label_ProjectTime);
+
+            // label_Hours
+            label_Hours = new WinFormsLabel
+            {
+                Name = "label_Hours",
+                Text = "hours",
+                ForeColor = Color.Gray,
+                BackColor = Color.Green,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(0, upperHeight),
+                Size = new Size(thirdWidth, lowerHeight)
+            };
+            //AdjustFontToLabel(label_Hours);
+
+            // label_Mins
+            label_Mins = new WinFormsLabel
+            {
+                Name = "label_Mins",
+                Text = "mins",
+                ForeColor = Color.Gray,
+                BackColor = Color.Yellow,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(thirdWidth, upperHeight),
+                Size = new Size(thirdWidth, lowerHeight)
+            };
+            //AdjustFontToLabel(label_Mins);
+
+            // label_Secs
+            label_Secs = new WinFormsLabel
+            {
+                Name = "label_Secs",
+                Text = "secs",
+                ForeColor = Color.Gray,
+                BackColor = Color.Orange,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(thirdWidth * 2, upperHeight),
+                Size = new Size(thirdWidth, lowerHeight)
+            };
+            //AdjustFontToLabel(label_Secs);
+
+            // label_ProjectName (po prawej, wycentrowany w pionie)
+            label_ProjectName = new WinFormsLabel
+            {
+                Text = "No project",
+                ForeColor = Color.White,
+                BackColor = Color.Red,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(halfWidth, 0),
+                Size = new Size(halfWidth, pictureBoxHeight)
+            };
+            //AdjustFontToLabel(label_ProjectName);
+
+            AdjustFontsForDigitalScreen();
+
+            // Dodajemy wszystkie kontrolki
+            pictureBox_digitalScreen.Controls.Add(label_ProjectTime);
+            pictureBox_digitalScreen.Controls.Add(label_Hours);
+            pictureBox_digitalScreen.Controls.Add(label_Mins);
+            pictureBox_digitalScreen.Controls.Add(label_Secs);
+            pictureBox_digitalScreen.Controls.Add(label_ProjectName);
+
+
+            this.Controls.Add(pictureBox_digitalScreen);
+        }
+
+        private void AdjustFontsForDigitalScreen()
+        {
+            int screenHeight = pictureBox_digitalScreen.Height;
+
+            // Wzorcowa wysokość digital screenu (dla której podałeś rozmiary czcionek)
+            float baseHeight = 26f;
+
+            // Obliczamy rozmiary czcionek w punktach
+            float font_ProjectTime = 12f * screenHeight / baseHeight;
+            float font_HoursMinsSecs = 4f * screenHeight / baseHeight;
+            float font_ProjectName = 7f * screenHeight / baseHeight;
+
+            label_ProjectTime.Font = new Font(label_ProjectTime.Font.FontFamily, font_ProjectTime, FontStyle.Regular, GraphicsUnit.Point);
+
+            label_Hours.Font = new Font(label_Hours.Font.FontFamily, font_HoursMinsSecs, FontStyle.Regular, GraphicsUnit.Point);
+
+            label_Mins.Font = new Font(label_Mins.Font.FontFamily, font_HoursMinsSecs, FontStyle.Regular, GraphicsUnit.Point);
+
+            label_Secs.Font = new Font(label_Secs.Font.FontFamily, font_HoursMinsSecs, FontStyle.Regular, GraphicsUnit.Point);
+
+            label_ProjectName.Font = new Font(label_ProjectName.Font.FontFamily, font_ProjectName, FontStyle.Regular, GraphicsUnit.Point);
+        }
+
 
         private void AddCustomButtons()
         {
-            int buttonWidthHorizontal = 35;
-            int buttonHeightHorizontal = 24;
+            buttonWidthHorizontal = 35;
+            buttonHeightHorizontal = 24;
 
-            int buttonHeightVertical = this.ClientSize.Height / 2;
-            int buttonWidthVertical = GetScaledWidth("Images/down_normal.png", buttonHeightVertical);
-            int margin = 3;
+            buttonHeightVertical = (this.ClientSize.Height / 2) - margin;
+            buttonWidthVertical = GetScaledWidth("Images/down_normal.png", buttonHeightVertical);
 
             button_ShowMainWindow = new CustomButton
             {
@@ -128,7 +310,6 @@ namespace WorkTimeCounterWidget
             button_StartStop.Click += button_StartStop_Click;
             this.Controls.Add(button_StartStop);
 
-            // Przycisk UP
             button_Up = new CustomButton
             {
                 Size = new Size(buttonWidthVertical, buttonHeightVertical),
@@ -138,7 +319,6 @@ namespace WorkTimeCounterWidget
             button_Up.Click += button_Up_Click;
             this.Controls.Add(button_Up);
 
-            // Przycisk DOWN
             button_Down = new CustomButton
             {
                 Size = new Size(buttonWidthVertical, buttonHeightVertical),
@@ -148,9 +328,9 @@ namespace WorkTimeCounterWidget
             button_Down.Click += button_Down_Click;
             this.Controls.Add(button_Down);
 
-            UpdateButtonPositions();
+            
 
-            this.Resize += (s, e) => UpdateButtonPositions();
+            //this.Resize += (s, e) => UpdateButtonPositions();
         }
 
         // Funkcja do obliczania szerokości zachowując proporcje
@@ -167,37 +347,71 @@ namespace WorkTimeCounterWidget
 
         private void UpdateButtonPositions()
         {
-            int margin = 3;
+            float scaleX = (float)this.ClientSize.Width / minFormWidth;
+            float scaleY = (float)this.ClientSize.Height / minFormHeight;
+            float scale = Math.Min(scaleX, scaleY);
 
-            button_ShowMainWindow.Location = new Point(
-                this.ClientSize.Width - button_ShowMainWindow.Width - margin,
-                margin
-            );
+            int margin = (int)(baseButtonMargin * scale);
 
-            button_Infolinia.Location = new Point(
-                button_ShowMainWindow.Location.X - button_Infolinia.Width,
-                button_ShowMainWindow.Location.Y
-            );
+            int buttonWidthHorizontal = (int)(baseButtonWidthHorizontal * scale);
+            int buttonHeightHorizontal = (int)(baseButtonHeightHorizontal * scale);
 
-            button_Break.Location = new Point(
-                button_Infolinia.Location.X - button_Break.Width,
-                button_Infolinia.Location.Y
-            );
+            int buttonHeightVertical = (this.ClientSize.Height / 2) - margin;
+            int buttonWidthVertical = GetScaledWidth("Images/down_normal.png", buttonHeightVertical);
 
-            button_StartStop.Location = new Point(
-                button_Break.Location.X - button_StartStop.Width,
-                button_Break.Location.Y
-            );
+            // Aktualizacja rozmiarów przycisków
+            button_ShowMainWindow.Size = new Size(buttonWidthHorizontal + 3, buttonHeightHorizontal);
+            button_Infolinia.Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal);
+            button_Break.Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal);
+            button_StartStop.Size = new Size(buttonWidthHorizontal, buttonHeightHorizontal);
+            button_Up.Size = new Size(buttonWidthVertical, buttonHeightVertical);
+            button_Down.Size = new Size(buttonWidthVertical, buttonHeightVertical);
 
-            button_Down.Location = new Point(
-                margin,
-                button_Up.Location.Y + button_Up.Height
-            );
+            // Pozycje przycisków
+            button_ShowMainWindow.Location = new Point(this.ClientSize.Width - button_ShowMainWindow.Width - margin, margin);
+            button_Infolinia.Location = new Point(button_ShowMainWindow.Location.X - button_Infolinia.Width, margin);
+            button_Break.Location = new Point(button_Infolinia.Location.X - button_Break.Width, margin);
+            button_StartStop.Location = new Point(button_Break.Location.X - button_StartStop.Width, margin);
+            button_Up.Location = new Point(margin, margin);
+            button_Down.Location = new Point(margin, button_Up.Height + margin);
 
-            button_Up.Location = new Point(
-                margin,
-                0
-            );
+            int pictureBoxWidth = this.ClientSize.Width - ((4 * margin) + buttonWidthVertical + buttonWidthHorizontal * 4);
+            int pictureBoxHeight = button_Up.Height + button_Down.Height;
+
+            pictureBox_digitalScreen.Location = new Point(button_Up.Right + margin, margin);
+            pictureBox_digitalScreen.Size = new Size(pictureBoxWidth, pictureBoxHeight);
+
+            int halfWidth = pictureBoxWidth / 2;
+            int upperHeight = (int)(pictureBoxHeight * 0.8);
+            int lowerHeight = pictureBoxHeight - upperHeight;
+            int thirdWidth = halfWidth / 3;
+
+            // label_ProjectTime
+            label_ProjectTime.Location = new Point(0, 0);
+            label_ProjectTime.Size = new Size(halfWidth, upperHeight);
+            //AdjustFontToLabel(label_ProjectTime);
+
+            // label_Hours
+            pictureBox_digitalScreen.Controls["label_Hours"].Location = new Point(0, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Hours"].Size = new Size(thirdWidth, lowerHeight);
+            //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Hours"]);
+
+            // label_Mins
+            pictureBox_digitalScreen.Controls["label_Mins"].Location = new Point(thirdWidth, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Mins"].Size = new Size(thirdWidth, lowerHeight);
+            //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Mins"]);
+
+            // label_Secs
+            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point(thirdWidth * 2, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Secs"].Size = new Size(thirdWidth, lowerHeight);
+            //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
+
+            // label_ProjectName
+            label_ProjectName.Location = new Point(halfWidth, 0);
+            label_ProjectName.Size = new Size(halfWidth, pictureBoxHeight);
+            //AdjustFontToLabel(label_ProjectName);
+
+            AdjustFontsForDigitalScreen();
         }
 
 
@@ -397,32 +611,99 @@ namespace WorkTimeCounterWidget
 
         bool mouseDown;
         private Point offset;
+        private Point lastMousePosition;
+        private const int resizeBorderThickness = 10;
+
+        private bool isResizeModeEnabled = false;
+        private bool isResizing = false;
+        private Point resizeStartMouse;
+        private Size resizeStartSize;
+
         private void mouseDown_Event(object sender, MouseEventArgs e)
         {
-            offset.X = e.X;
-            offset.Y = e.Y;
-            mouseDown = true;
+            if (isResizeModeEnabled)
+            {
+                isResizing = true;
+                resizeStartMouse = Cursor.Position; // globalna pozycja kursora
+                resizeStartSize = this.Size;
+            }
+            else
+            {
+                offset = new Point(e.X, e.Y);
+                mouseDown = true;
+            }
         }
+
+
+        //private void mouseMove_Event(object sender, MouseEventArgs e)
+        //{
+        //    if (isResizeModeEnabled && isResizing)
+        //    {
+        //        Point currentMouse = Cursor.Position;
+        //        int deltaX = currentMouse.X - resizeStartMouse.X;
+        //        int deltaY = currentMouse.Y - resizeStartMouse.Y;
+
+        //        // Nowy rozmiar formularza
+        //        int newWidth = Math.Max(minFormWidth, resizeStartSize.Width + deltaX);  // Min width = 100
+        //        int newHeight = Math.Max(minFormHeight, resizeStartSize.Height + deltaY); // Min height = 50
+
+        //        this.Size = new Size(newWidth, newHeight);
+        //    }
+        //    else if (!isResizeModeEnabled && mouseDown)
+        //    {
+        //        Point currentScreenPosition = PointToScreen(e.Location);
+        //        Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
+        //    }
+        //}
 
         private void mouseMove_Event(object sender, MouseEventArgs e)
         {
-            if (mouseDown == true)
+            if (isResizeModeEnabled && isResizing)
+            {
+                Point currentMouse = Cursor.Position;
+                int deltaX = currentMouse.X - resizeStartMouse.X;
+
+                // Wyliczamy nową szerokość z uwzględnieniem minimum
+                int newWidth = Math.Max(minFormWidth, resizeStartSize.Width + deltaX);
+
+                // Oblicz proporcję na podstawie początkowych rozmiarów
+                float aspectRatio = (float)resizeStartSize.Height / resizeStartSize.Width;
+
+                // Ustal wysokość na podstawie nowej szerokości
+                int newHeight = (int)(newWidth * aspectRatio);
+
+                // Minimalna wysokość
+                if (newHeight < minFormHeight)
+                {
+                    newHeight = minFormHeight;
+                    newWidth = (int)(newHeight / aspectRatio); // Dopasuj szerokość, żeby zachować proporcje
+                }
+
+                this.Size = new Size(newWidth, newHeight);
+
+                // Przeskaluj przyciski po zmianie rozmiaru
+                UpdateButtonPositions(); // zakładamy, że ta metoda reaguje na zmianę rozmiaru
+            }
+            else if (!isResizeModeEnabled && mouseDown)
             {
                 Point currentScreenPosition = PointToScreen(e.Location);
                 Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
             }
         }
 
+
+
         private void mouseUp_Event(object sender, MouseEventArgs e)
         {
             mouseDown = false;
-
+            isResizing = false;
         }
+
 
 
     }
 
-public class FontManager
+    public class FontManager
     {
         private PrivateFontCollection privateFontCollection = new PrivateFontCollection();
 

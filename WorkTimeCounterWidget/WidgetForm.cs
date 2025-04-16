@@ -36,7 +36,8 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
-        private Color defaultBackColor = ColorTranslator.FromHtml("#202020");
+        private Color defaultBackColor = ColorTranslator.FromHtml("#EAEBEC");
+        private Color resizeBackColor = ColorTranslator.FromHtml("#757575");
 
         private CustomButton button_ShowMainWindow;
         private CustomButton button_Infolinia;
@@ -123,7 +124,7 @@ namespace WorkTimeCounterWidget
             if (isResizeModeEnabled)
             {
                 this.Cursor = Cursors.SizeNWSE;
-                this.BackColor = Color.DarkRed;
+                this.BackColor = resizeBackColor;
             }
             else
             {

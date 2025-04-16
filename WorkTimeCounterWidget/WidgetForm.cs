@@ -149,7 +149,7 @@ namespace WorkTimeCounterWidget
             pictureBox_digitalScreen = new PictureBox
             {
                 Size = new Size(pictureBoxWidth, pictureBoxHeight),
-                BackColor = ColorTranslator.FromHtml("#202020"),
+                BackColor = ColorTranslator.FromHtml("#DDDDDD"),
                 Location = new Point(
                     button_Up.Location.X + button_Up.Width + margin,
                     button_Up.Location.Y + (button_Up.Height / 2) - (pictureBoxHeight / 2)
@@ -165,8 +165,8 @@ namespace WorkTimeCounterWidget
             label_ProjectTime = new WinFormsLabel
             {
                 Text = "00:00:00",
-                ForeColor = Color.White,
-                BackColor = Color.Blue,
+                ForeColor = Color.Black,
+                BackColor = Color.Transparent,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(0, 0),
@@ -180,9 +180,9 @@ namespace WorkTimeCounterWidget
                 Name = "label_Hours",
                 Text = "hours",
                 ForeColor = Color.Gray,
-                BackColor = Color.Green,
+                BackColor = Color.Transparent,
                 AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
+                TextAlign = ContentAlignment.MiddleRight,
                 Location = new Point(0, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
@@ -194,7 +194,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Mins",
                 Text = "mins",
                 ForeColor = Color.Gray,
-                BackColor = Color.Yellow,
+                BackColor = Color.Transparent,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(thirdWidth, upperHeight),
@@ -208,9 +208,9 @@ namespace WorkTimeCounterWidget
                 Name = "label_Secs",
                 Text = "secs",
                 ForeColor = Color.Gray,
-                BackColor = Color.Orange,
+                BackColor = Color.Transparent,
                 AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
+                TextAlign = ContentAlignment.MiddleLeft,
                 Location = new Point(thirdWidth * 2, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
@@ -220,8 +220,8 @@ namespace WorkTimeCounterWidget
             label_ProjectName = new WinFormsLabel
             {
                 Text = "No project",
-                ForeColor = Color.White,
-                BackColor = Color.Red,
+                ForeColor = Color.Black,
+                BackColor = Color.Transparent,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(halfWidth, 0),
@@ -250,11 +250,11 @@ namespace WorkTimeCounterWidget
             float baseHeight = 26f;
 
             // Obliczamy rozmiary czcionek w punktach
-            float font_ProjectTime = 12f * screenHeight / baseHeight;
-            float font_HoursMinsSecs = 4f * screenHeight / baseHeight;
-            float font_ProjectName = 7f * screenHeight / baseHeight;
+            float font_ProjectTime = 15f * screenHeight / baseHeight;
+            float font_HoursMinsSecs = 3f * screenHeight / baseHeight;
+            float font_ProjectName = 9f * screenHeight / baseHeight;
 
-            label_ProjectTime.Font = new Font(label_ProjectTime.Font.FontFamily, font_ProjectTime, FontStyle.Regular, GraphicsUnit.Point);
+            label_ProjectTime.Font = fontManager.GetFont("Technology", font_ProjectTime, FontStyle.Bold);
 
             label_Hours.Font = new Font(label_Hours.Font.FontFamily, font_HoursMinsSecs, FontStyle.Regular, GraphicsUnit.Point);
 
@@ -262,7 +262,7 @@ namespace WorkTimeCounterWidget
 
             label_Secs.Font = new Font(label_Secs.Font.FontFamily, font_HoursMinsSecs, FontStyle.Regular, GraphicsUnit.Point);
 
-            label_ProjectName.Font = new Font(label_ProjectName.Font.FontFamily, font_ProjectName, FontStyle.Regular, GraphicsUnit.Point);
+            label_ProjectName.Font = fontManager.GetFont("Technology", font_ProjectName, FontStyle.Bold);
         }
 
 
@@ -385,6 +385,7 @@ namespace WorkTimeCounterWidget
             int upperHeight = (int)(pictureBoxHeight * 0.8);
             int lowerHeight = pictureBoxHeight - upperHeight;
             int thirdWidth = halfWidth / 3;
+            int hoursMinsSecsYLocation = (int)(upperHeight * 0.9);
 
             // label_ProjectTime
             label_ProjectTime.Location = new Point(0, 0);
@@ -392,17 +393,17 @@ namespace WorkTimeCounterWidget
             //AdjustFontToLabel(label_ProjectTime);
 
             // label_Hours
-            pictureBox_digitalScreen.Controls["label_Hours"].Location = new Point(0, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Hours"].Location = new Point(0, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Hours"].Size = new Size(thirdWidth, lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Hours"]);
 
             // label_Mins
-            pictureBox_digitalScreen.Controls["label_Mins"].Location = new Point(thirdWidth, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Mins"].Location = new Point(thirdWidth, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Mins"].Size = new Size(thirdWidth, lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Mins"]);
 
             // label_Secs
-            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point(thirdWidth * 2, upperHeight);
+            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point(thirdWidth * 2, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Secs"].Size = new Size(thirdWidth, lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
 

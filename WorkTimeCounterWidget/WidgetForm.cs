@@ -133,15 +133,6 @@ namespace WorkTimeCounterWidget
             }
         }
 
-
-
-        private void Form_Resize(object sender, EventArgs e)
-        {
-            // Na przykład: przeliczenie layoutu, odświeżenie zaokrągleń itp.
-            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
-            //UpdateButtonPositions();
-        }
-
         private void AddDigitalScreen()
         {
             int pictureBoxWidth = this.ClientSize.Width - ((2 * margin) + buttonWidthVertical + buttonWidthHorizontal * 4);
@@ -150,11 +141,13 @@ namespace WorkTimeCounterWidget
             pictureBox_digitalScreen = new PictureBox
             {
                 Size = new Size(pictureBoxWidth, pictureBoxHeight),
-                BackColor = ColorTranslator.FromHtml("#DDDDDD"),
                 Location = new Point(
                     button_Up.Location.X + button_Up.Width + margin,
                     button_Up.Location.Y + (button_Up.Height / 2) - (pictureBoxHeight / 2)
-                )
+                ),
+                Image = Image.FromFile("Images/digitalScreenBG.png"),
+                SizeMode = PictureBoxSizeMode.StretchImage, // lub Zoom, jeśli chcesz zachować proporcje
+                BackColor = Color.Transparent
             };
 
             int halfWidth = pictureBoxWidth / 2;
@@ -173,7 +166,6 @@ namespace WorkTimeCounterWidget
                 Location = new Point(0, 0),
                 Size = new Size(halfWidth, upperHeight)
             };
-           //AdjustFontToLabel(label_ProjectTime);
 
             // label_Hours
             label_Hours = new WinFormsLabel
@@ -187,7 +179,6 @@ namespace WorkTimeCounterWidget
                 Location = new Point(0, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
-            //AdjustFontToLabel(label_Hours);
 
             // label_Mins
             label_Mins = new WinFormsLabel
@@ -201,7 +192,6 @@ namespace WorkTimeCounterWidget
                 Location = new Point(thirdWidth, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
-            //AdjustFontToLabel(label_Mins);
 
             // label_Secs
             label_Secs = new WinFormsLabel
@@ -215,7 +205,6 @@ namespace WorkTimeCounterWidget
                 Location = new Point(thirdWidth * 2, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
-            //AdjustFontToLabel(label_Secs);
 
             // label_ProjectName (po prawej, wycentrowany w pionie)
             label_ProjectName = new WinFormsLabel
@@ -228,19 +217,23 @@ namespace WorkTimeCounterWidget
                 Location = new Point(halfWidth, 0),
                 Size = new Size(halfWidth, pictureBoxHeight)
             };
-            //AdjustFontToLabel(label_ProjectName);
 
             AdjustFontsForDigitalScreen();
 
-            // Dodajemy wszystkie kontrolki
             pictureBox_digitalScreen.Controls.Add(label_ProjectTime);
             pictureBox_digitalScreen.Controls.Add(label_Hours);
             pictureBox_digitalScreen.Controls.Add(label_Mins);
             pictureBox_digitalScreen.Controls.Add(label_Secs);
             pictureBox_digitalScreen.Controls.Add(label_ProjectName);
 
-
             this.Controls.Add(pictureBox_digitalScreen);
+        }
+
+
+        private void Form_Resize(object sender, EventArgs e)
+        {
+            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
+            //UpdateButtonPositions();
         }
 
         private void AdjustFontsForDigitalScreen()

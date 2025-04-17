@@ -36,6 +36,9 @@
     <None Update="Fonts\Technology.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\digitalScreenBG.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Images\down_click.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using WinFormsLabel = System.Windows.Forms.Label;
+using System.ComponentModel;
 
 namespace WorkTimeCounterWidget
 {
@@ -70,7 +71,8 @@ namespace WorkTimeCounterWidget
         {
             InitializeComponent();
 
-            this.MouseDoubleClick += Form_MouseDoubleClick;
+            //this.MouseDoubleClick += Form_MouseDoubleClick;
+            //this.MouseDoubleClick += Form_MouseDoubleClick;
             this.Resize += Form_Resize;
             this.MinimumSize = new Size(minFormWidth, minFormHeight);
 
@@ -115,9 +117,43 @@ namespace WorkTimeCounterWidget
                 this.projects = projects;
                 UpdateCurrentProject();
             };
+
+
+            AttachDoubleClickHandlers(this);
+        }
+        private void AttachDoubleClickHandlers(Control control)
+        {
+            // Dodaj tylko jeśli handler jeszcze nie jest przypisany
+            if (!HasMouseDoubleClickHandler(control, ToggleResizeMode))
+            {
+                control.MouseDoubleClick += ToggleResizeMode;
+            }
+
+            foreach (Control child in control.Controls)
+            {
+                AttachDoubleClickHandlers(child);
+            }
         }
 
-        private void Form_MouseDoubleClick(object sender, MouseEventArgs e)
+        private bool HasMouseDoubleClickHandler(Control control, MouseEventHandler handlerToCheck)
+        {
+            var field = typeof(Control)
+                .GetField("EventMouseDoubleClick", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+            if (field == null) return false;
+
+            object key = field.GetValue(null);
+            if (key == null) return false;
+
+            var events = (EventHandlerList)typeof(Component)
+                .GetProperty("Events", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(control, null);
+
+            Delegate d = events?[key];
+            return d?.GetInvocationList().Contains(handlerToCheck) ?? false;
+        }
+
+        private void ToggleResizeMode(object sender, MouseEventArgs e)
         {
             isResizeModeEnabled = !isResizeModeEnabled;
 

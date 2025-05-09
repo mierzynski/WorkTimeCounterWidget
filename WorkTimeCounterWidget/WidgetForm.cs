@@ -167,6 +167,18 @@ namespace WorkTimeCounterWidget
                 this.Cursor = Cursors.Default;
                 this.BackColor = defaultBackColor;
             }
+
+            SetButtonsEnabled(!isResizeModeEnabled);
+        }
+
+        private void SetButtonsEnabled(bool enabled)
+        {
+            button_ShowMainWindow.Enabled = enabled;
+            button_Infolinia.Enabled = enabled;
+            button_Break.Enabled = enabled;
+            button_StartStop.Enabled = enabled;
+            button_Up.Enabled = enabled;
+            button_Down.Enabled = enabled;
         }
 
         private void AddDigitalScreen()

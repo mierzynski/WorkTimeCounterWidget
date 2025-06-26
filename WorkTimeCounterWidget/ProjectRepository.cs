@@ -52,10 +52,4 @@ namespace WorkTimeCounterWidget
             SaveProjects();
         }
     }
-
-    //public class ProjectNameOnly
-    //{
-    //    public string Name { get; set; }
-    //}
-
 }

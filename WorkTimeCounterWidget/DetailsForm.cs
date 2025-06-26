@@ -92,21 +92,6 @@ namespace WorkTimeCounterWidget
             this.Hide();
         }
 
-        private void SaveProjectsToFile()
-        {
-            try
-            {
-                var projectNames = projects.Select(p => new ProjectNameOnly { Name = p.Name }).ToList();
-
-                var json = JsonSerializer.Serialize(projectNames);
-                File.WriteAllText(FilePath, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving projects: {ex.Message}");
-            }
-        }
-
         private void UpdateTimeSumLabel(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
         {
 

@@ -75,8 +75,7 @@ namespace WorkTimeCounterWidget
 
             projectRepository = new ProjectRepository();
             projectRepository.ProjectsChanged += OnProjectsChanged;
-            //this.MouseDoubleClick += Form_MouseDoubleClick;
-            //this.MouseDoubleClick += Form_MouseDoubleClick;
+
             this.Resize += Form_Resize;
             this.MinimumSize = new Size(minFormWidth, minFormHeight);
 
@@ -104,12 +103,6 @@ namespace WorkTimeCounterWidget
             {
                 MessageBox.Show($"Błąd podczas ładowania czcionek: {ex.Message}");
             }
-
-
-            //detailsForm = new DetailsForm();
-
-
-            //detailsForm.Hide();
 
             AddCustomButtons();
             AddDigitalScreen();
@@ -671,20 +664,6 @@ namespace WorkTimeCounterWidget
             }
         }
 
-        private void OnProjectsUpdated(List<Project> updatedProjects)
-        {
-            this.projects = new List<Project>(updatedProjects); // Tworzymy nową listę
-            SaveProjectsToFile();
-
-            // Aktualizuj indeks bieżącego projektu
-            if (currentProjectIndex >= projects.Count)
-            {
-                currentProjectIndex = projects.Count - 1;
-            }
-
-            UpdateCurrentProject();
-        }
-
         bool mouseDown;
         private Point offset;
         private Point lastMousePosition;
@@ -709,28 +688,6 @@ namespace WorkTimeCounterWidget
                 mouseDown = true;
             }
         }
-
-
-        //private void mouseMove_Event(object sender, MouseEventArgs e)
-        //{
-        //    if (isResizeModeEnabled && isResizing)
-        //    {
-        //        Point currentMouse = Cursor.Position;
-        //        int deltaX = currentMouse.X - resizeStartMouse.X;
-        //        int deltaY = currentMouse.Y - resizeStartMouse.Y;
-
-        //        // Nowy rozmiar formularza
-        //        int newWidth = Math.Max(minFormWidth, resizeStartSize.Width + deltaX);  // Min width = 100
-        //        int newHeight = Math.Max(minFormHeight, resizeStartSize.Height + deltaY); // Min height = 50
-
-        //        this.Size = new Size(newWidth, newHeight);
-        //    }
-        //    else if (!isResizeModeEnabled && mouseDown)
-        //    {
-        //        Point currentScreenPosition = PointToScreen(e.Location);
-        //        Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
-        //    }
-        //}
 
         private void mouseMove_Event(object sender, MouseEventArgs e)
         {
@@ -766,8 +723,6 @@ namespace WorkTimeCounterWidget
                 Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
             }
         }
-
-
 
         private void mouseUp_Event(object sender, MouseEventArgs e)
         {

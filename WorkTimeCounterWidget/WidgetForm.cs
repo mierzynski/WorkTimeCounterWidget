@@ -1,18 +1,20 @@
-﻿using System.Runtime.InteropServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 using WinFormsLabel = System.Windows.Forms.Label;
-using System.ComponentModel;
 
 namespace WorkTimeCounterWidget
 {
     public partial class WidgetForm : Form
     {
+        private readonly ProjectRepository projectRepository;
         //zaokrąglenie formularza
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
@@ -24,7 +26,7 @@ namespace WorkTimeCounterWidget
             int nWidthEllipse, // width of ellipse
             int nHeightEllipse // height of ellipse
         );
-
+        private const string FilePath = "projects.json";
         private List<Project> projects = new List<Project>();
         private int currentProjectIndex = -1; // Brak projektu na początku
         private TimeSpan projectTime = TimeSpan.Zero;
@@ -71,6 +73,8 @@ namespace WorkTimeCounterWidget
         {
             InitializeComponent();
 
+            projectRepository = new ProjectRepository();
+            projectRepository.ProjectsChanged += OnProjectsChanged;
             //this.MouseDoubleClick += Form_MouseDoubleClick;
             //this.MouseDoubleClick += Form_MouseDoubleClick;
             this.Resize += Form_Resize;
@@ -102,24 +106,44 @@ namespace WorkTimeCounterWidget
             }
 
 
-            detailsForm = new DetailsForm();
+            //detailsForm = new DetailsForm();
 
 
-            detailsForm.Hide();
-            detailsForm.LoadProjectsFromFile();
+            //detailsForm.Hide();
 
             AddCustomButtons();
             AddDigitalScreen();
             UpdateButtonPositions();
 
-            detailsForm.ProjectsUpdated += projects =>
-            {
-                this.projects = projects;
-                UpdateCurrentProject();
-            };
-
 
             AttachDoubleClickHandlers(this);
+            projectRepository.LoadProjects();
+        }
+
+        private void OnProjectsChanged()
+        {
+            projects = projectRepository.Projects;
+
+            if (currentProjectIndex >= projects.Count)
+            {
+                currentProjectIndex = projects.Count - 1;
+            }
+
+            UpdateCurrentProject();
+        }
+
+        private void SaveProjectsToFile()
+        {
+            try
+            {
+                var projectNames = projects.Select(p => new ProjectNameOnly { Name = p.Name }).ToList();
+                var json = JsonSerializer.Serialize(projectNames);
+                File.WriteAllText(FilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving projects: {ex.Message}");
+            }
         }
         private void AttachDoubleClickHandlers(Control control)
         {
@@ -631,6 +655,10 @@ namespace WorkTimeCounterWidget
 
         private void button_ShowMainWindow_Click(object sender, EventArgs e)
         {
+            if (detailsForm == null || detailsForm.IsDisposed)
+            {
+                detailsForm = new DetailsForm(projectRepository);
+            }
 
             if (detailsForm.Visible)
             {
@@ -638,18 +666,23 @@ namespace WorkTimeCounterWidget
             }
             else
             {
-                detailsForm = new DetailsForm();
-
-                // Przesyłanie listy projektów, czasu przerwy i infolinii
-                detailsForm.ReceiveProjectsData(projects, breakTime, infoLineTime);
-
-                detailsForm.ProjectsUpdated += projects =>
-                {
-                    this.projects = projects;
-                    UpdateCurrentProject();
-                };
+                detailsForm.ReceiveProjectsData(projectRepository.Projects, breakTime, infoLineTime);
                 detailsForm.Show();
             }
+        }
+
+        private void OnProjectsUpdated(List<Project> updatedProjects)
+        {
+            this.projects = new List<Project>(updatedProjects); // Tworzymy nową listę
+            SaveProjectsToFile();
+
+            // Aktualizuj indeks bieżącego projektu
+            if (currentProjectIndex >= projects.Count)
+            {
+                currentProjectIndex = projects.Count - 1;
+            }
+
+            UpdateCurrentProject();
         }
 
         bool mouseDown;

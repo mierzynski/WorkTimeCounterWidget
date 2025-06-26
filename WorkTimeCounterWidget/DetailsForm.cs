@@ -13,19 +13,77 @@ namespace WorkTimeCounterWidget
         private List<Project> projects = new List<Project>();
         private TimeSpan infoLineTime = TimeSpan.Zero;
         private TimeSpan breakTime = TimeSpan.Zero;
-
-        private WidgetForm widgetForm;
-        public DetailsForm()
+        private readonly ProjectRepository projectRepository;
+        public DetailsForm(ProjectRepository projectRepository)
         {
             InitializeComponent();
-            LoadProjectsFromFile();
+            this.projectRepository = projectRepository;
             this.FormClosing += new FormClosingEventHandler(DetailsForm_FormClosing);
         }
-        public event Action<List<Project>> ProjectsUpdated;
-        private void OnProjectsUpdated()
+        private void button_AddProject_Click(object sender, EventArgs e)
         {
-            // Wywo³anie zdarzenia, jeœli ma subskrybentów
-            ProjectsUpdated?.Invoke(projects);
+            string projectName = textBox_ProjectName.Text;
+
+            if (string.IsNullOrEmpty(projectName))
+            {
+                MessageBox.Show("Please enter a project name.");
+                return;
+            }
+
+            projectRepository.AddProject(projectName);
+            textBox_ProjectName.Clear();
+            UpdateProjectsList();
+            UpdateProjectTimesList();
+        }
+
+        private void button_DeleteProject_Click(object sender, EventArgs e)
+        {
+            if (listBox_Projects.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a project to delete.");
+                return;
+            }
+
+            string projectName = listBox_Projects.SelectedItem.ToString();
+            Project projectToDelete = projectRepository.Projects.FirstOrDefault(p => p.Name == projectName);
+
+            if (projectToDelete != null)
+            {
+                projectRepository.RemoveProject(projectToDelete);
+                UpdateProjectsList();
+                UpdateProjectTimesList();
+            }
+        }
+
+        public void ReceiveProjectsData(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
+        {
+            this.breakTime = breakTime;
+            this.infoLineTime = infoLineTime;
+
+            UpdateProjectsList();
+            UpdateProjectTimesList();
+        }
+
+        private void UpdateProjectsList()
+        {
+            listBox_Projects.Items.Clear();
+            foreach (var project in projectRepository.Projects)
+            {
+                listBox_Projects.Items.Add(project.Name);
+            }
+        }
+
+        private void UpdateProjectTimesList()
+        {
+            listBox_ProjectTimesList.Items.Clear();
+            foreach (var project in projectRepository.Projects)
+            {
+                listBox_ProjectTimesList.Items.Add($"{project.Name} - {project.TimeSpent.ToString(@"hh\:mm\:ss")}");
+            }
+            listBox_ProjectTimesList.Items.Add($"Przerwa: {breakTime.ToString(@"hh\:mm\:ss")}");
+            listBox_ProjectTimesList.Items.Add($"Infolinia WB: {infoLineTime.ToString(@"hh\:mm\:ss")}");
+
+            UpdateTimeSumLabel(projectRepository.Projects, breakTime, infoLineTime);
         }
 
         private void DetailsForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -49,95 +107,6 @@ namespace WorkTimeCounterWidget
             }
         }
 
-        public void LoadProjectsFromFile()
-        {
-            try
-            {
-                if (File.Exists(FilePath))
-                {
-                    var json = File.ReadAllText(FilePath);
-                    var projectNames = JsonSerializer.Deserialize<List<ProjectNameOnly>>(json) ?? new List<ProjectNameOnly>();
-
-                    projects = projectNames.Select(p => new Project(p.Name)).ToList();
-                }
-                else
-                {
-                    projects = new List<Project>();
-                    SaveProjectsToFile();
-                }
-
-                listBox_Projects.Items.Clear();
-                foreach (var project in projects)
-                {
-                    listBox_Projects.Items.Add(project.Name);
-                }
-                OnProjectsUpdated();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading projects: {ex.Message}");
-            }
-        }
-
-
-
-
-
-        private void button_AddProject_Click(object sender, EventArgs e)
-        {
-            string projectName = textBox_ProjectName.Text;
-
-            if (string.IsNullOrEmpty(projectName))
-            {
-                MessageBox.Show("Please enter a project name.");
-                return;
-            }
-
-            Project newProject = new Project(projectName);
-            projects.Add(newProject);
-            listBox_Projects.Items.Add(projectName);
-            textBox_ProjectName.Clear();
-
-            SaveProjectsToFile();
-            OnProjectsUpdated();
-        }
-
-        private void button_DeleteProject_Click(object sender, EventArgs e)
-        {
-            if (listBox_Projects.SelectedItem == null)
-            {
-                MessageBox.Show("Please select a project to delete.");
-                return;
-            }
-
-            string projectName = listBox_Projects.SelectedItem.ToString();
-            Project projectToDelete = projects.FirstOrDefault(p => p.Name == projectName);
-
-            if (projectToDelete != null)
-            {
-                projects.Remove(projectToDelete);
-                listBox_Projects.Items.Remove(projectName);
-                SaveProjectsToFile();
-                OnProjectsUpdated();
-            }
-        }
-
-        public void ReceiveProjectsData(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
-        {
-            listBox_ProjectTimesList.Items.Clear();
-            this.projects = projects;
-            this.breakTime = breakTime;
-            this.infoLineTime = infoLineTime;
-
-            foreach (var project in projects)
-            {
-                listBox_ProjectTimesList.Items.Add($"{project.Name} - {project.TimeSpent.ToString(@"hh\:mm\:ss")}");
-            }
-            listBox_ProjectTimesList.Items.Add($"Przerwa: {breakTime.ToString(@"hh\:mm\:ss")}");
-            listBox_ProjectTimesList.Items.Add($"Infolinia WB: {infoLineTime.ToString(@"hh\:mm\:ss")}");
-
-            UpdateTimeSumLabel(projects, breakTime, infoLineTime);
-        }
         private void UpdateTimeSumLabel(List<Project> projects, TimeSpan breakTime, TimeSpan infoLineTime)
         {
 

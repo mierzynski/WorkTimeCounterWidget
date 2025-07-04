@@ -108,12 +108,13 @@ namespace WorkTimeCounterWidget
 
             AddCustomButtons();
             AddDigitalScreen();
-            UpdateButtonPositions();
-
-
             AttachDoubleClickHandlers(this);
             projectRepository.LoadProjects();
             this.Location = projectRepository.WidgetLocation;
+            this.Size = projectRepository.WidgetSize;
+            UpdateButtonPositions();
+
+
         }
 
         private void OnProjectsChanged()
@@ -128,19 +129,6 @@ namespace WorkTimeCounterWidget
             UpdateCurrentProject();
         }
 
-        private void SaveProjectsToFile()
-        {
-            try
-            {
-                var projectNames = projects.Select(p => new ProjectNameOnly { Name = p.Name }).ToList();
-                var json = JsonSerializer.Serialize(projectNames);
-                File.WriteAllText(FilePath, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving projects: {ex.Message}");
-            }
-        }
         private void AttachDoubleClickHandlers(Control control)
         {
             // Dodaj tylko jeśli handler jeszcze nie jest przypisany
@@ -186,6 +174,7 @@ namespace WorkTimeCounterWidget
             {
                 this.Cursor = Cursors.Default;
                 this.BackColor = defaultBackColor;
+                projectRepository.UpdateSize(this.Size);
             }
 
             SetButtonsEnabled(!isResizeModeEnabled);
@@ -715,15 +704,36 @@ namespace WorkTimeCounterWidget
                     newWidth = (int)(newHeight / aspectRatio); // Dopasuj szerokość, żeby zachować proporcje
                 }
 
+                // Sprawdź, czy nowy rozmiar nie wykracza poza ekran
+                Rectangle screenBounds = Screen.FromControl(this).Bounds;
+                if (this.Location.X + newWidth > screenBounds.Width)
+                {
+                    newWidth = screenBounds.Width - this.Location.X;
+                    newHeight = (int)(newWidth * aspectRatio);
+                }
+
                 this.Size = new Size(newWidth, newHeight);
 
                 // Przeskaluj przyciski po zmianie rozmiaru
-                UpdateButtonPositions(); // zakładamy, że ta metoda reaguje na zmianę rozmiaru
+                UpdateButtonPositions();
             }
             else if (!isResizeModeEnabled && mouseDown)
             {
                 Point currentScreenPosition = PointToScreen(e.Location);
-                Location = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
+                Point newLocation = new Point(currentScreenPosition.X - offset.X, currentScreenPosition.Y - offset.Y);
+
+                // Pobierz wymiary całego ekranu, włącznie z paskiem zadań
+                Rectangle screenBounds = Screen.FromControl(this).Bounds;
+
+                // Ogranicz położenie X - widget nie może wyjść poza ekran w poziomie
+                newLocation.X = Math.Max(screenBounds.X, newLocation.X); // Lewa krawędź
+                newLocation.X = Math.Min(screenBounds.Width - this.Width, newLocation.X); // Prawa krawędź
+
+                // Ogranicz położenie Y - widget może być schowany, ale musi być widoczny na wysokość swojego rozmiaru
+                newLocation.Y = Math.Max(screenBounds.Y - this.Height + this.Height, newLocation.Y); // Górna krawędź
+                newLocation.Y = Math.Min(screenBounds.Height - this.Height, newLocation.Y); // Dolna krawędź
+
+                Location = newLocation;
             }
         }
 

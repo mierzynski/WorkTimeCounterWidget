@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -81,6 +82,7 @@ namespace WorkTimeCounterWidget
 
 
 
+
             //zaokrąglenie formularza
             this.FormBorderStyle = FormBorderStyle.None;
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
@@ -111,6 +113,7 @@ namespace WorkTimeCounterWidget
 
             AttachDoubleClickHandlers(this);
             projectRepository.LoadProjects();
+            this.Location = projectRepository.WidgetLocation;
         }
 
         private void OnProjectsChanged()
@@ -728,6 +731,7 @@ namespace WorkTimeCounterWidget
         {
             mouseDown = false;
             isResizing = false;
+            projectRepository.UpdateLocation(this.Location);
         }
 
 

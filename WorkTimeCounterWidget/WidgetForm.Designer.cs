@@ -45,7 +45,7 @@
             ClientSize = new Size(310, 30);
             FormBorderStyle = FormBorderStyle.None;
             Name = "WidgetForm";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.Manual;
             Text = "Widget";
             TopMost = true;
             MouseDown += mouseDown_Event;

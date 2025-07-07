@@ -15,6 +15,8 @@ namespace WorkTimeCounterWidget
 {
     public partial class WidgetForm : Form
     {
+        protected override bool ShowWithoutActivation => true;
+
         private readonly ProjectRepository projectRepository;
         //zaokrąglenie formularza
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -114,7 +116,8 @@ namespace WorkTimeCounterWidget
             this.Size = projectRepository.WidgetSize;
             UpdateButtonPositions();
 
-
+            this.TopMost = true;
+            this.ShowInTaskbar = false;
         }
 
         private void OnProjectsChanged()

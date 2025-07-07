@@ -2,11 +2,13 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using WinFormsLabel = System.Windows.Forms.Label;
 
 namespace WorkTimeCounterWidget
 {
     public class CustomButton : PictureBox
     {
+        private WinFormsLabel buttonLabel;
         public enum ButtonLocation { Left, Mid, Right, Up, Down }
         public enum ButtonOrientation { Horizontal, Vertical }
 
@@ -15,6 +17,19 @@ namespace WorkTimeCounterWidget
         private Image _normalImage;
         private Image _hoverImage;
         private Image _clickImage;
+
+        public string LabelText
+        {
+            get { return buttonLabel?.Text ?? string.Empty; }
+            set
+            {
+                if (buttonLabel == null)
+                {
+                    CreateLabel();
+                }
+                buttonLabel.Text = value;
+            }
+        }
 
         public ButtonLocation LocationState
         {
@@ -47,6 +62,48 @@ namespace WorkTimeCounterWidget
             this.MouseLeave += (s, e) => this.Image = _normalImage;
             this.MouseDown += (s, e) => this.Image = _clickImage;
             this.MouseUp += (s, e) => this.Image = _hoverImage;
+        }
+
+        private void CreateLabel()
+        {
+            buttonLabel = new WinFormsLabel
+            {
+                Text = "",
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Size = new Size(this.Width, 15),
+                ForeColor = Color.Black,
+                BackColor = Color.Transparent,
+                Font = new Font("Arial", 6, FontStyle.Bold),
+                Location = new Point(0, this.Height - 15)
+            };
+            this.Controls.Add(buttonLabel);
+
+            buttonLabel.BringToFront();
+        }
+
+        public void UpdateLabelPosition(float scale = 1.0f)
+        {
+            if (buttonLabel != null)
+            {
+                buttonLabel.Size = new Size(this.Width, 15);
+
+                // Obliczamy pozycję Y w zależności od skali
+                int baseOffset = 10;
+                int additionalOffset = (int)(scale);
+                int yPosition = this.Height - (baseOffset + additionalOffset);
+
+                buttonLabel.Location = new Point(0, yPosition);
+            }
+        }
+
+        public void UpdateLabelFont(float scale)
+        {
+            if (buttonLabel != null)
+            {
+                float fontSize = Math.Max(2.0f, 4.0f * scale);
+                buttonLabel.Font = new Font(buttonLabel.Font.FontFamily, fontSize, FontStyle.Bold);
+            }
         }
 
         private void UpdateImages()
@@ -119,6 +176,7 @@ namespace WorkTimeCounterWidget
         {
             base.OnResize(e);
             UpdateImages();
+            UpdateLabelPosition();
         }
     }
 }

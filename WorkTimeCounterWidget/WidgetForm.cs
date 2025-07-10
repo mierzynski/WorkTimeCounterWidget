@@ -294,7 +294,6 @@ namespace WorkTimeCounterWidget
         private void Form_Resize(object sender, EventArgs e)
         {
             Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
-            Debug.WriteLine(this.Width);
         }
 
         private void AdjustFontsForDigitalScreen()
@@ -559,9 +558,8 @@ namespace WorkTimeCounterWidget
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
 
             // label_ProjectName
-            label_ProjectName.Location = new Point(pictureBox_digitalScreen.Width - label_ProjectName.Width - (int)(margin * scale), 0);
             label_ProjectName.Size = new Size(halfWidth, pictureBoxHeight);
-            //AdjustFontToLabel(label_ProjectName);
+            label_ProjectName.Location = new Point(pictureBox_digitalScreen.Width - label_ProjectName.Width - (int)(margin * scale), 0);
 
             AdjustFontsForDigitalScreen();
         }

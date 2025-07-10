@@ -52,7 +52,7 @@ namespace WorkTimeCounterWidget
                         {
                             Projects = projectNames.Select(p => new Project(p.Name)).ToList();
                             WidgetLocation = new Point(100, 100); // domyślna pozycja
-                            WidgetSize = new Size(310, 30); // domyślny rozmiar
+                            WidgetSize = new Size(315, 30); // domyślny rozmiar
                         }
                     }
                 }
@@ -60,7 +60,7 @@ namespace WorkTimeCounterWidget
                 {
                     Projects = new();
                     WidgetLocation = new Point(100, 100);
-                    WidgetSize = new Size(310, 30);
+                    WidgetSize = new Size(315, 30);
                     SaveProjects(); // utworzenie pustego pliku
                 }
 
@@ -73,7 +73,7 @@ namespace WorkTimeCounterWidget
                 MessageBox.Show($"Błąd podczas wczytywania projektów: {ex.Message}");
                 Projects = new();
                 WidgetLocation = new Point(100, 100);
-                WidgetSize = new Size(310, 30);
+                WidgetSize = new Size(315, 30);
             }
         }
 

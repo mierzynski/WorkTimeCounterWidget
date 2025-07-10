@@ -234,7 +234,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Hours",
                 Text = "hours",
                 ForeColor = Color.Gray,
-                BackColor = Color.Red,
+                BackColor = Color.Transparent,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleRight,
                 Location = new Point(0, upperHeight),
@@ -247,7 +247,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Mins",
                 Text = "mins",
                 ForeColor = Color.Gray,
-                BackColor = Color.Blue,
+                BackColor = Color.Transparent,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(thirdWidth, upperHeight),
@@ -260,9 +260,9 @@ namespace WorkTimeCounterWidget
                 Name = "label_Secs",
                 Text = "secs",
                 ForeColor = Color.Gray,
-                BackColor = Color.Orange,
+                BackColor = Color.Transparent,
                 AutoSize = false,
-                TextAlign = ContentAlignment.MiddleLeft,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(thirdWidth * 2, upperHeight),
                 Size = new Size(thirdWidth, lowerHeight)
             };
@@ -544,17 +544,17 @@ namespace WorkTimeCounterWidget
             //AdjustFontToLabel(label_ProjectTime);
 
             // label_Hours
-            pictureBox_digitalScreen.Controls["label_Hours"].Location = new Point(0, hoursMinsSecsYLocation);
+            pictureBox_digitalScreen.Controls["label_Hours"].Location = new Point(margin, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Hours"].Size = new Size((int)(thirdWidth * 0.8), lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Hours"]);
 
             // label_Mins
-            pictureBox_digitalScreen.Controls["label_Mins"].Location = new Point(thirdWidth, hoursMinsSecsYLocation);
+            pictureBox_digitalScreen.Controls["label_Mins"].Location = new Point(thirdWidth + margin, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Mins"].Size = new Size((int)(thirdWidth * 0.7), lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Mins"]);
 
             // label_Secs
-            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point((int)((pictureBox_digitalScreen.Controls["label_Mins"].Width + pictureBox_digitalScreen.Controls["label_Hours"].Width)*1.3), hoursMinsSecsYLocation);
+            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point((int)((pictureBox_digitalScreen.Controls["label_Mins"].Width + pictureBox_digitalScreen.Controls["label_Hours"].Width)*1.3) + margin, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Secs"].Size = new Size((int)(thirdWidth * 0.7), lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
 

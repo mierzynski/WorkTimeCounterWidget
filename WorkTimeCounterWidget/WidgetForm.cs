@@ -66,6 +66,7 @@ namespace WorkTimeCounterWidget
         private int buttonWidthVertical;
 
         private readonly int minFormWidth = 315;
+        private readonly int maxFormWidth = 600;
         private readonly int minFormHeight = 30;
         private readonly int baseButtonWidthHorizontal = 35;
         private readonly int baseButtonHeightHorizontal = 24;
@@ -233,7 +234,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Hours",
                 Text = "hours",
                 ForeColor = Color.Gray,
-                BackColor = Color.Transparent,
+                BackColor = Color.Red,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleRight,
                 Location = new Point(0, upperHeight),
@@ -246,7 +247,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Mins",
                 Text = "mins",
                 ForeColor = Color.Gray,
-                BackColor = Color.Transparent,
+                BackColor = Color.Blue,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(thirdWidth, upperHeight),
@@ -259,7 +260,7 @@ namespace WorkTimeCounterWidget
                 Name = "label_Secs",
                 Text = "secs",
                 ForeColor = Color.Gray,
-                BackColor = Color.Transparent,
+                BackColor = Color.Orange,
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Location = new Point(thirdWidth * 2, upperHeight),
@@ -293,7 +294,7 @@ namespace WorkTimeCounterWidget
         private void Form_Resize(object sender, EventArgs e)
         {
             Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
-            //UpdateButtonPositions();
+            Debug.WriteLine(this.Width);
         }
 
         private void AdjustFontsForDigitalScreen()
@@ -411,25 +412,73 @@ namespace WorkTimeCounterWidget
         //    return totalWidth - (totalButtonsWidth + totalMarginsWidth);
         //}
 
-        private int CalculateDigitalScreenWidth()
+        //private int CalculateDigitalScreenWidth()
+        //{
+        //    Debug.WriteLine(pictureBox_digitalScreen.Width);
+        //    int totalWidth = this.ClientSize.Width;
+
+        //    // Szerokość przycisków
+        //    int totalButtonsWidth = buttonWidthVertical;  // przycisk Up/Down
+        //    totalButtonsWidth += (buttonWidthHorizontal * 4);  // przyciski poziome
+        //    totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
+
+        //    // Marginesy
+        //    int totalMarginsWidth = margin * 8;
+
+        //    // Dodatkowe odsunięcie
+        //    int additionalSpacing = 10;  // możesz dostosować tę wartość
+
+        //    // Oblicz dostępną szerokość dla digitalScreen
+        //    int availableWidth = totalWidth - (totalButtonsWidth + totalMarginsWidth + additionalSpacing);
+
+        //    return availableWidth;
+        //}
+
+        private int CalculateDigitalScreenWidth(float _scale = 0)
         {
+            if(_scale == 0)
+            {
+            //Debug.WriteLine(pictureBox_digitalScreen.Width);
             int totalWidth = this.ClientSize.Width;
 
             // Szerokość przycisków
-            int totalButtonsWidth = buttonWidthVertical;  // przycisk Up/Down
-            totalButtonsWidth += (buttonWidthHorizontal * 4);  // przyciski poziome
-            totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
+            int totalButtonsWidth = button_Up.Width;  // przycisk Up/Down
+            totalButtonsWidth += (button_Infolinia.Width * 4);  // przyciski poziome
+            //totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
 
             // Marginesy
             int totalMarginsWidth = margin * 8;
 
             // Dodatkowe odsunięcie
-            int additionalSpacing = 10;  // możesz dostosować tę wartość
+            int additionalSpacing = 0;  // możesz dostosować tę wartość
 
             // Oblicz dostępną szerokość dla digitalScreen
             int availableWidth = totalWidth - (totalButtonsWidth + totalMarginsWidth + additionalSpacing);
 
             return availableWidth;
+
+            }
+            else
+            {
+                //Debug.WriteLine(pictureBox_digitalScreen.Width);
+                int totalWidth = this.ClientSize.Width;
+
+                // Szerokość przycisków
+                int totalButtonsWidth = button_Up.Width;  // przycisk Up/Down
+                totalButtonsWidth += (button_Infolinia.Width * 4);  // przyciski poziome
+                totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
+
+                // Marginesy
+                int totalMarginsWidth = (int)(_scale * margin) * 4;
+
+                // Dodatkowe odsunięcie
+                int additionalSpacing = 0;  // możesz dostosować tę wartość
+
+                // Oblicz dostępną szerokość dla digitalScreen
+                int availableWidth = totalWidth - (totalButtonsWidth + totalMarginsWidth + additionalSpacing);
+
+                return availableWidth;
+            }
         }
 
         private void UpdateButtonPositions()
@@ -477,7 +526,7 @@ namespace WorkTimeCounterWidget
             button_Down.Location = new Point(margin, button_Up.Height + margin);
 
 
-            int pictureBoxWidth = CalculateDigitalScreenWidth();
+            int pictureBoxWidth = CalculateDigitalScreenWidth(scale);
             int pictureBoxHeight = button_Up.Height + button_Down.Height;
 
             pictureBox_digitalScreen.Location = new Point(button_Up.Right + margin, margin);
@@ -491,7 +540,7 @@ namespace WorkTimeCounterWidget
 
             // label_ProjectTime
             label_ProjectTime.Location = new Point(0, 0);
-            label_ProjectTime.Size = new Size((int)(pictureBoxWidth * 0.45), upperHeight);
+            label_ProjectTime.Size = new Size(halfWidth, upperHeight);
             //AdjustFontToLabel(label_ProjectTime);
 
             // label_Hours
@@ -510,7 +559,7 @@ namespace WorkTimeCounterWidget
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
 
             // label_ProjectName
-            label_ProjectName.Location = new Point(label_ProjectTime.Width, 0);
+            label_ProjectName.Location = new Point(pictureBox_digitalScreen.Width - label_ProjectName.Width - (int)(margin * scale), 0);
             label_ProjectName.Size = new Size(halfWidth, pictureBoxHeight);
             //AdjustFontToLabel(label_ProjectName);
 
@@ -791,21 +840,48 @@ namespace WorkTimeCounterWidget
             //    // Przeskaluj przyciski po zmianie rozmiaru
             //    UpdateButtonPositions();
             //}
+            //if (isResizeModeEnabled && isResizing)
+            //{
+            //    Point currentMouse = Cursor.Position;
+            //    int deltaX = currentMouse.X - resizeStartMouse.X;
+
+            //    // Wyliczamy nową szerokość z uwzględnieniem minimum
+            //    int newWidth = Math.Max(minFormWidth, resizeStartSize.Width + deltaX);
+
+            //    // Oblicz proporcję na podstawie minimalnych wymiarów
+            //    float aspectRatio = (float)minFormHeight / minFormWidth;
+
+            //    // Ustal wysokość na podstawie nowej szerokości, zachowując proporcje względem wymiarów minimalnych
+            //    int newHeight = (int)(newWidth * aspectRatio);
+
+            //    // Sprawdź, czy nowy rozmiar nie wykracza poza ekran
+            //    Rectangle screenBounds = Screen.FromControl(this).Bounds;
+            //    if (this.Location.X + newWidth > screenBounds.Width)
+            //    {
+            //        newWidth = screenBounds.Width - this.Location.X;
+            //        newHeight = (int)(newWidth * aspectRatio);
+            //    }
+
+            //    this.Size = new Size(newWidth, newHeight);
+
+            //    // Przeskaluj przyciski po zmianie rozmiaru
+            //    UpdateButtonPositions();
+            //}
             if (isResizeModeEnabled && isResizing)
             {
                 Point currentMouse = Cursor.Position;
                 int deltaX = currentMouse.X - resizeStartMouse.X;
 
-                // Wyliczamy nową szerokość z uwzględnieniem minimum
-                int newWidth = Math.Max(minFormWidth, resizeStartSize.Width + deltaX);
+                // Oblicz nową szerokość z uwzględnieniem min i max
+                int newWidth = resizeStartSize.Width + deltaX;
+                newWidth = Math.Max(minFormWidth, newWidth);
+                newWidth = Math.Min(maxFormWidth, newWidth);
 
-                // Oblicz proporcję na podstawie minimalnych wymiarów
+                // Zachowaj proporcje względem minimalnych wymiarów
                 float aspectRatio = (float)minFormHeight / minFormWidth;
-
-                // Ustal wysokość na podstawie nowej szerokości, zachowując proporcje względem wymiarów minimalnych
                 int newHeight = (int)(newWidth * aspectRatio);
 
-                // Sprawdź, czy nowy rozmiar nie wykracza poza ekran
+                // Upewnij się, że nowy rozmiar mieści się na ekranie
                 Rectangle screenBounds = Screen.FromControl(this).Bounds;
                 if (this.Location.X + newWidth > screenBounds.Width)
                 {

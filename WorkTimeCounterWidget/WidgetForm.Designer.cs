@@ -34,7 +34,7 @@
             // 
             // timer
             // 
-            timer.Interval = 1000;
+            timer.Interval = 500;
             timer.Tick += timer_Tick;
             // 
             // WidgetForm

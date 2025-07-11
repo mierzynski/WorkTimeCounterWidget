@@ -149,6 +149,42 @@ namespace WorkTimeCounterWidget
 
             MessageBox.Show($"Dane zapisano do pliku: {fileName}", "Zapis zakoñczony", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void button_ApplyCorrectTime_Click(object sender, EventArgs e)
+        {
+            if (listBox_ProjectTimesList.SelectedItem == null)
+            {
+                MessageBox.Show("Wybierz projekt z listy.");
+                return;
+            }
+
+            string selectedItem = listBox_ProjectTimesList.SelectedItem.ToString();
+            string[] parts = selectedItem.Split('-');
+            if (parts.Length < 1) return;
+
+            string projectName = parts[0].Trim();
+
+            if (!TimeSpan.TryParse(textBox_CorrectTime.Text, out TimeSpan newTime))
+            {
+                MessageBox.Show("Nieprawid³owy format czasu. U¿yj formatu hh:mm:ss");
+                return;
+            }
+
+            var project = projectRepository.Projects.FirstOrDefault(p => p.Name == projectName);
+
+            if (project != null)
+            {
+                project.TimeSpent = newTime;
+                textBox_CorrectTime.Clear();
+                UpdateProjectTimesList();
+
+                // Powiadom WidgetForm, ¿eby go odœwie¿yæ
+                if (Application.OpenForms["WidgetForm"] is WidgetForm widgetForm)
+                {
+                    widgetForm.UpdateCurrentProject();
+                }
+            }
+        }
     }
     public class ProjectNameOnly
     {

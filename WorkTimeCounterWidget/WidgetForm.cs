@@ -43,6 +43,7 @@ namespace WorkTimeCounterWidget
         private FontManager fontManager;
 
         private int tickCounter = 0;
+        private bool isBlinkOn = true;
 
         private Color defaultBackColor = ColorTranslator.FromHtml("#EAEBEC");
         private Color resizeBackColor = ColorTranslator.FromHtml("#757575");
@@ -696,33 +697,54 @@ namespace WorkTimeCounterWidget
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
-            {
-                // Liczymy czas dla bieżącego projektu
-                var currentProject = projects[currentProjectIndex];
-                currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
-                label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
-            }
-            else if (isBreakRunning)
-            {
-                // Liczymy czas dla przerwy
-                breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
-                label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
-            }
-            else if (isInfoLineRunning)
-            {
-                // Liczymy czas dla infolinii
-                infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
-                label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
-            }
-
             tickCounter++;
+            //isBlinkOn = !isBlinkOn;
 
-            if (tickCounter >= 30)
+            // Co sekunda (czyli co 2 ticki, bo tick co 500 ms)
+            if (tickCounter % 2 == 0)
             {
-                tickCounter = 0;
-                this.TopMost = false;
-                this.TopMost = true;
+                if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
+                {
+                    var currentProject = projects[currentProjectIndex];
+                    currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
+                    label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
+                }
+                else if (isBreakRunning)
+                {
+                    breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
+                    label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+                }
+                else if (isInfoLineRunning)
+                {
+                    infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
+                    label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
+                }
+
+                // Co 30 sekund - odśwież z-order (TopMost)
+                if (tickCounter >= 60)
+                {
+                    tickCounter = 0;
+                    this.TopMost = false;
+                    this.TopMost = true;
+                }
+            }
+
+            // 🔁 Co 500ms: miganie
+            if (isBreakRunning || isInfoLineRunning)
+            {
+                label_ProjectName.ForeColor = isBlinkOn ? Color.Gray : Color.Black;
+                label_ProjectTime.ForeColor = Color.Black;
+            }
+            else if (!isTimerRunning)
+            {
+                label_ProjectTime.ForeColor = isBlinkOn ? Color.Red : Color.Black;
+                label_ProjectName.ForeColor = Color.Black;
+            }
+            else
+            {
+                // Normalny stan - przywróć kolory
+                label_ProjectName.ForeColor = Color.Black;
+                label_ProjectTime.ForeColor = Color.Black;
             }
         }
 

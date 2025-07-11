@@ -30,12 +30,18 @@
         {
             components = new System.ComponentModel.Container();
             timer = new System.Windows.Forms.Timer(components);
+            blinkTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
             // timer
             // 
-            timer.Interval = 500;
+            timer.Interval = 1000;
             timer.Tick += timer_Tick;
+            // 
+            // blinkTimer
+            // 
+            blinkTimer.Interval = 500;
+            blinkTimer.Tick += blinkTimer_Tick;
             // 
             // WidgetForm
             // 
@@ -56,5 +62,6 @@
 
         #endregion
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer blinkTimer;
     }
 }

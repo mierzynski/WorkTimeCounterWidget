@@ -43,7 +43,8 @@ namespace WorkTimeCounterWidget
         private FontManager fontManager;
 
         private int tickCounter = 0;
-        private bool isBlinkOn = true;
+        private bool isBlinkOn = false;
+
 
         private Color defaultBackColor = ColorTranslator.FromHtml("#EAEBEC");
         private Color resizeBackColor = ColorTranslator.FromHtml("#757575");
@@ -87,8 +88,6 @@ namespace WorkTimeCounterWidget
             this.MinimumSize = new Size(minFormWidth, minFormHeight);
 
 
-
-
             //zaokrąglenie formularza
             this.FormBorderStyle = FormBorderStyle.None;
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 5, 5));
@@ -122,6 +121,8 @@ namespace WorkTimeCounterWidget
 
             this.TopMost = true;
             this.ShowInTaskbar = false;
+
+            blinkTimer.Start();
         }
 
         private void OnProjectsChanged()
@@ -438,26 +439,26 @@ namespace WorkTimeCounterWidget
 
         private int CalculateDigitalScreenWidth(float _scale = 0)
         {
-            if(_scale == 0)
+            if (_scale == 0)
             {
-            //Debug.WriteLine(pictureBox_digitalScreen.Width);
-            int totalWidth = this.ClientSize.Width;
+                //Debug.WriteLine(pictureBox_digitalScreen.Width);
+                int totalWidth = this.ClientSize.Width;
 
-            // Szerokość przycisków
-            int totalButtonsWidth = button_Up.Width;  // przycisk Up/Down
-            totalButtonsWidth += (button_Infolinia.Width * 4);  // przyciski poziome
-            //totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
+                // Szerokość przycisków
+                int totalButtonsWidth = button_Up.Width;  // przycisk Up/Down
+                totalButtonsWidth += (button_Infolinia.Width * 4);  // przyciski poziome
+                                                                    //totalButtonsWidth += 3;  // dodatkowa szerokość dla button_ShowMainWindow
 
-            // Marginesy
-            int totalMarginsWidth = margin * 8;
+                // Marginesy
+                int totalMarginsWidth = margin * 8;
 
-            // Dodatkowe odsunięcie
-            int additionalSpacing = 0;  // możesz dostosować tę wartość
+                // Dodatkowe odsunięcie
+                int additionalSpacing = 0;  // możesz dostosować tę wartość
 
-            // Oblicz dostępną szerokość dla digitalScreen
-            int availableWidth = totalWidth - (totalButtonsWidth + totalMarginsWidth + additionalSpacing);
+                // Oblicz dostępną szerokość dla digitalScreen
+                int availableWidth = totalWidth - (totalButtonsWidth + totalMarginsWidth + additionalSpacing);
 
-            return availableWidth;
+                return availableWidth;
 
             }
             else
@@ -556,7 +557,7 @@ namespace WorkTimeCounterWidget
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Mins"]);
 
             // label_Secs
-            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point((int)((pictureBox_digitalScreen.Controls["label_Mins"].Width + pictureBox_digitalScreen.Controls["label_Hours"].Width)*1.3) + margin, hoursMinsSecsYLocation);
+            pictureBox_digitalScreen.Controls["label_Secs"].Location = new Point((int)((pictureBox_digitalScreen.Controls["label_Mins"].Width + pictureBox_digitalScreen.Controls["label_Hours"].Width) * 1.3) + margin, hoursMinsSecsYLocation);
             pictureBox_digitalScreen.Controls["label_Secs"].Size = new Size((int)(thirdWidth * 0.7), lowerHeight);
             //AdjustFontToLabel((WinFormsLabel)pictureBox_digitalScreen.Controls["label_Secs"]);
 
@@ -698,57 +699,58 @@ namespace WorkTimeCounterWidget
         private void timer_Tick(object sender, EventArgs e)
         {
             tickCounter++;
-            //isBlinkOn = !isBlinkOn;
 
-            // Co sekunda (czyli co 2 ticki, bo tick co 500 ms)
-            if (tickCounter % 2 == 0)
+            // Co sekunda - zliczanie czasu
+            if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
             {
-                if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
-                {
-                    var currentProject = projects[currentProjectIndex];
-                    currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
-                    label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
-                }
-                else if (isBreakRunning)
-                {
-                    breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
-                    label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
-                }
-                else if (isInfoLineRunning)
-                {
-                    infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
-                    label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
-                }
-
-                // Co 30 sekund - odśwież z-order (TopMost)
-                if (tickCounter >= 60)
-                {
-                    tickCounter = 0;
-                    this.TopMost = false;
-                    this.TopMost = true;
-                }
+                var currentProject = projects[currentProjectIndex];
+                currentProject.TimeSpent = currentProject.TimeSpent.Add(TimeSpan.FromSeconds(1));
+                label_ProjectTime.Text = currentProject.TimeSpent.ToString(@"hh\:mm\:ss");
+            }
+            else if (isBreakRunning)
+            {
+                breakTime = breakTime.Add(TimeSpan.FromSeconds(1));
+                label_ProjectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+            }
+            else if (isInfoLineRunning)
+            {
+                infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
+                label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
             }
 
-            // 🔁 Co 500ms: miganie
+            // Co 30 sekund - odświeżenie TopMost
+            if (tickCounter >= 30)
+            {
+                tickCounter = 0;
+
+                this.TopMost = false;
+                this.TopMost = true;
+            }
+        }
+
+        private void blinkTimer_Tick(object sender, EventArgs e)
+        {
+            isBlinkOn = !isBlinkOn;
+
             if (isBreakRunning || isInfoLineRunning)
             {
-                label_ProjectName.ForeColor = isBlinkOn ? Color.Gray : Color.Black;
+                // Migaj label_ProjectName
+                label_ProjectName.ForeColor = isBlinkOn ? Color.Red : Color.Black;
                 label_ProjectTime.ForeColor = Color.Black;
             }
             else if (!isTimerRunning)
             {
+                // Migaj czasem, jeśli wszystko wstrzymane
                 label_ProjectTime.ForeColor = isBlinkOn ? Color.Red : Color.Black;
                 label_ProjectName.ForeColor = Color.Black;
             }
             else
             {
-                // Normalny stan - przywróć kolory
-                label_ProjectName.ForeColor = Color.Black;
+                // Brak migania
                 label_ProjectTime.ForeColor = Color.Black;
+                label_ProjectName.ForeColor = Color.Black;
             }
         }
-
-
 
 
 
@@ -951,7 +953,6 @@ namespace WorkTimeCounterWidget
             isResizing = false;
             projectRepository.UpdateLocation(this.Location);
         }
-
 
 
     }

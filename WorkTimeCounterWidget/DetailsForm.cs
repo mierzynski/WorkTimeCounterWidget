@@ -162,7 +162,7 @@ namespace WorkTimeCounterWidget
             string[] parts = selectedItem.Split('-');
             if (parts.Length < 1) return;
 
-            string projectName = parts[0].Trim();
+            string itemLabel = parts[0].Trim(); // Mo¿e byæ "Projekt A", "Przerwa", "Infolinia WB"
 
             if (!TimeSpan.TryParse(textBox_CorrectTime.Text, out TimeSpan newTime))
             {
@@ -170,19 +170,68 @@ namespace WorkTimeCounterWidget
                 return;
             }
 
-            var project = projectRepository.Projects.FirstOrDefault(p => p.Name == projectName);
+            // Obs³uga przerwy
+            if (itemLabel.StartsWith("Przerwa", StringComparison.OrdinalIgnoreCase))
+            {
+                breakTime = newTime;
+                textBox_CorrectTime.Clear();
+                UpdateProjectTimesList();
+                return;
+            }
 
+            // Obs³uga infolinii
+            if (itemLabel.StartsWith("Infolinia", StringComparison.OrdinalIgnoreCase))
+            {
+                infoLineTime = newTime;
+                textBox_CorrectTime.Clear();
+                UpdateProjectTimesList();
+                return;
+            }
+
+            // Standardowy projekt
+            var project = projectRepository.Projects.FirstOrDefault(p => p.Name == itemLabel);
             if (project != null)
             {
                 project.TimeSpent = newTime;
                 textBox_CorrectTime.Clear();
                 UpdateProjectTimesList();
 
-                // Powiadom WidgetForm, ¿eby go odœwie¿yæ
+                // Aktualizuj widget tylko, jeœli widaæ ten projekt
                 if (Application.OpenForms["WidgetForm"] is WidgetForm widgetForm)
                 {
                     widgetForm.UpdateCurrentProject();
                 }
+            }
+        }
+
+        private void listBox_ProjectTimesList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedItem = listBox_ProjectTimesList.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selectedItem))
+                return;
+
+            if (selectedItem.StartsWith("Przerwa", StringComparison.OrdinalIgnoreCase))
+            {
+                textBox_CorrectTime.Text = breakTime.ToString(@"hh\:mm\:ss");
+                return;
+            }
+
+            if (selectedItem.StartsWith("Infolinia", StringComparison.OrdinalIgnoreCase))
+            {
+                textBox_CorrectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
+                return;
+            }
+
+            // Domyœlne — projekt
+            string[] parts = selectedItem.Split('-');
+            if (parts.Length > 1)
+            {
+                string timePart = parts[1].Trim();
+                textBox_CorrectTime.Text = timePart;
+            }
+            else
+            {
+                textBox_CorrectTime.Text = "";
             }
         }
     }

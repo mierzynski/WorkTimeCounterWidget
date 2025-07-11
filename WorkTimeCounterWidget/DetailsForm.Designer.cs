@@ -92,6 +92,7 @@
             listBox_ProjectTimesList.Name = "listBox_ProjectTimesList";
             listBox_ProjectTimesList.Size = new Size(322, 94);
             listBox_ProjectTimesList.TabIndex = 6;
+            listBox_ProjectTimesList.SelectedIndexChanged += listBox_ProjectTimesList_SelectedIndexChanged;
             // 
             // button_CountTheDay
             // 

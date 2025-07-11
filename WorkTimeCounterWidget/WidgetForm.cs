@@ -42,6 +42,8 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
+        private int tickCounter = 0;
+
         private Color defaultBackColor = ColorTranslator.FromHtml("#EAEBEC");
         private Color resizeBackColor = ColorTranslator.FromHtml("#757575");
 
@@ -712,6 +714,15 @@ namespace WorkTimeCounterWidget
                 // Liczymy czas dla infolinii
                 infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
                 label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
+            }
+
+            tickCounter++;
+
+            if (tickCounter >= 30)
+            {
+                tickCounter = 0;
+                this.TopMost = false;
+                this.TopMost = true;
             }
         }
 

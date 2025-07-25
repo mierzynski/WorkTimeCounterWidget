@@ -42,7 +42,7 @@ namespace WorkTimeCounterWidget
         private DetailsForm detailsForm;
         private FontManager fontManager;
 
-        private int tickCounter = 0;
+        private int topMostTickCounter = 0;
         private bool isBlinkOn = false;
 
 
@@ -594,14 +594,14 @@ namespace WorkTimeCounterWidget
             {
                 timer.Stop();
                 isProjectRunning = false;
-                button_StartStop.Text = "PAUSED";
+                button_StartStop.LabelText = "START";
                 //button_StartStop.BackColor = ColorTranslator.FromHtml("#FF0000");
             }
             else
             {
                 timer.Start();
                 isProjectRunning = true;
-                button_StartStop.Text = "STARTED";
+                button_StartStop.LabelText = "STOP";
                 //button_StartStop.BackColor = ColorTranslator.FromHtml("#008000");
             }
 
@@ -698,7 +698,6 @@ namespace WorkTimeCounterWidget
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            tickCounter++;
 
             // Co sekunda - zliczanie czasu
             if (isProjectRunning && !isBreakRunning && !isInfoLineRunning && currentProjectIndex >= 0 && currentProjectIndex < projects.Count)
@@ -717,19 +716,11 @@ namespace WorkTimeCounterWidget
                 infoLineTime = infoLineTime.Add(TimeSpan.FromSeconds(1));
                 label_ProjectTime.Text = infoLineTime.ToString(@"hh\:mm\:ss");
             }
-
-            // Co 30 sekund - odświeżenie TopMost
-            if (tickCounter >= 30)
-            {
-                tickCounter = 0;
-
-                this.TopMost = false;
-                this.TopMost = true;
-            }
         }
 
         private void blinkTimer_Tick(object sender, EventArgs e)
         {
+            topMostTickCounter++;
             isBlinkOn = !isBlinkOn;
 
             if (isBreakRunning || isInfoLineRunning)
@@ -749,6 +740,14 @@ namespace WorkTimeCounterWidget
                 // Brak migania
                 label_ProjectTime.ForeColor = Color.Black;
                 label_ProjectName.ForeColor = Color.Black;
+            }
+
+            if (topMostTickCounter >= 60)
+            {
+                topMostTickCounter = 0;
+
+                this.TopMost = false;
+                this.TopMost = true;
             }
         }
 

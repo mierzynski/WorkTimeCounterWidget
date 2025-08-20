@@ -139,15 +139,19 @@ namespace WorkTimeCounterWidget
 
         private void AttachDoubleClickHandlers(Control control)
         {
-            // Dodaj tylko jeśli handler jeszcze nie jest przypisany
-            if (!HasMouseDoubleClickHandler(control, ToggleResizeMode))
+            // Sprawdź, czy kontrolka nie jest przyciskiem Up lub Down
+            if (control != button_Up && control != button_Down)
             {
-                control.MouseDoubleClick += ToggleResizeMode;
-            }
+                // Dodaj tylko jeśli handler jeszcze nie jest przypisany
+                if (!HasMouseDoubleClickHandler(control, ToggleResizeMode))
+                {
+                    control.MouseDoubleClick += ToggleResizeMode;
+                }
 
-            foreach (Control child in control.Controls)
-            {
-                AttachDoubleClickHandlers(child);
+                foreach (Control child in control.Controls)
+                {
+                    AttachDoubleClickHandlers(child);
+                }
             }
         }
 
@@ -291,9 +295,28 @@ namespace WorkTimeCounterWidget
             pictureBox_digitalScreen.Controls.Add(label_Secs);
             pictureBox_digitalScreen.Controls.Add(label_ProjectName);
 
+            label_ProjectName.MouseWheel += Label_ProjectName_MouseWheel;
+
             this.Controls.Add(pictureBox_digitalScreen);
         }
+        private void Label_ProjectName_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (projects.Count == 0 || isTimerRunning) return;  // Nie zmieniamy projektu gdy timer jest aktywny
 
+            // Delta > 0 oznacza scroll w górę, Delta < 0 oznacza scroll w dół
+            if (e.Delta > 0)
+            {
+                // Scroll w górę - poprzedni projekt
+                currentProjectIndex = (currentProjectIndex - 1 + projects.Count) % projects.Count;
+            }
+            else
+            {
+                // Scroll w dół - następny projekt
+                currentProjectIndex = (currentProjectIndex + 1) % projects.Count;
+            }
+
+            UpdateCurrentProject();
+        }
 
         private void Form_Resize(object sender, EventArgs e)
         {
